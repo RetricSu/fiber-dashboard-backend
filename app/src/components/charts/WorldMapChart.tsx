@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 import { GeoNode } from '@/libs/types';
+import worldGeoJson from '@/libs/maps/world.json';
 
 interface WorldMapChartProps {
   data: GeoNode[];
@@ -14,28 +15,13 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [mapError, setMapError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!chartRef.current) return;
 
     // 初始化图表
     chartInstance.current = echarts.init(chartRef.current);
-
-    // 加载世界地图 GeoJSON 数据
-    const loadWorldMap = async () => {
-      try {
-        const response = await fetch('/maps/world.json');
-        const worldMapData = await response.json();
-        
-        // 注册世界地图
-        echarts.registerMap('world', worldMapData);
-        setMapLoaded(true);
-      } catch (error) {
-        console.error('Failed to load world map data:', error);
-      }
-    };
-
-    loadWorldMap();
 
     // 设置响应式
     const handleResize = () => {
@@ -47,6 +33,22 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
       window.removeEventListener('resize', handleResize);
       chartInstance.current?.dispose();
     };
+  }, []);
+
+  // 独立加载世界地图 GeoJSON（使用打包内置 JSON）
+  useEffect(() => {
+    try {
+      if (worldGeoJson) {
+        echarts.registerMap('world', worldGeoJson as any);
+        setMapLoaded(true);
+        console.log('World map registered from local JSON, features:', (worldGeoJson as any).features?.length);
+      } else {
+        setMapError('World GeoJSON not found');
+      }
+    } catch (error) {
+      console.error('Failed to register local world GeoJSON:', error);
+      setMapError(error instanceof Error ? error.message : 'Unknown error');
+    }
   }, []);
 
   useEffect(() => {
@@ -130,22 +132,26 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
     chartInstance.current.setOption(option);
   }, [data, mapLoaded]);
 
-  if (!mapLoaded) {
-    return (
-      <div 
-        style={{ height }} 
-        className={`${className} flex items-center justify-center bg-muted/50 rounded-lg`}
-      >
-        <div className="text-muted-foreground">Loading world map...</div>
-      </div>
-    );
-  }
-
   return (
-    <div 
-      ref={chartRef} 
-      style={{ height }} 
-      className={className}
-    />
+    <div style={{ position: 'relative' }}>
+      <div 
+        ref={chartRef} 
+        style={{ height }} 
+        className={className}
+      />
+      {!mapLoaded && !mapError && (
+        <div className={`${className} absolute inset-0 flex items-center justify-center pointer-events-none`}>
+          <div className="text-muted-foreground">Loading world map...</div>
+        </div>
+      )}
+      {mapError && (
+        <div className={`${className} absolute inset-0 flex items-center justify-center pointer-events-none`}>
+          <div className="text-center">
+            <div className="text-destructive mb-2">Failed to load world map</div>
+            <div className="text-sm text-muted-foreground">{mapError}</div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
