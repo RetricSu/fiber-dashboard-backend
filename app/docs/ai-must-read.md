@@ -1,6 +1,6 @@
 # 项目必读
 
-你是一个熟练的前端开发 AI，接下来我要你帮我基于 Next.js（App Router）+ TypeScript + Tailwind CSS + shadcn/ui + TanStack Query + ECharts 搭建一个闪电网络（Lightning Network）的 Dashboard 前端骨架。
+你是一个熟练的前端开发 AI，接下来我要你帮我基于 Next.js（App Router）+ TypeScript + Tailwind CSS + shadcn/ui + TanStack Query + ECharts 维护一个闪电网络（Lightning Network）的 Dashboard 前端项目。
 
 要求：
 1. 开始工作前阅读 docs/ 中必要的文档，补充背景知识。
@@ -18,3 +18,4 @@
 9. 添加 Vitest + Testing Library 基础测试用例。
 10. 按需懒加载图表和地图组件。
 11. 在 docs/ 中记录必要的文档，以合适的名字命名，方便后续 AI 查看维护。
+12. 目前大部分基础工作已经完成，请询问用户任务，并遵循他给的新的指令。

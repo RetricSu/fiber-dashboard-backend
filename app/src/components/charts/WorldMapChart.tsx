@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 import { GeoNode } from '@/libs/types';
 
@@ -13,12 +13,29 @@ interface WorldMapChartProps {
 export default function WorldMapChart({ data, height = '500px', className = '' }: WorldMapChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
     if (!chartRef.current) return;
 
     // 初始化图表
     chartInstance.current = echarts.init(chartRef.current);
+
+    // 加载世界地图 GeoJSON 数据
+    const loadWorldMap = async () => {
+      try {
+        const response = await fetch('/maps/world.json');
+        const worldMapData = await response.json();
+        
+        // 注册世界地图
+        echarts.registerMap('world', worldMapData);
+        setMapLoaded(true);
+      } catch (error) {
+        console.error('Failed to load world map data:', error);
+      }
+    };
+
+    loadWorldMap();
 
     // 设置响应式
     const handleResize = () => {
@@ -33,7 +50,7 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
   }, []);
 
   useEffect(() => {
-    if (!chartInstance.current || !data.length) return;
+    if (!chartInstance.current || !data.length || !mapLoaded) return;
 
     // 转换数据格式
     const mapData = data.map(item => ({
@@ -111,7 +128,18 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
     };
 
     chartInstance.current.setOption(option);
-  }, [data]);
+  }, [data, mapLoaded]);
+
+  if (!mapLoaded) {
+    return (
+      <div 
+        style={{ height }} 
+        className={`${className} flex items-center justify-center bg-muted/50 rounded-lg`}
+      >
+        <div className="text-muted-foreground">Loading world map...</div>
+      </div>
+    );
+  }
 
   return (
     <div 
