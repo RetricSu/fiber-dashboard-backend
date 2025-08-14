@@ -58,7 +58,7 @@ export default function KpiCard({
 
   return (
     <Card
-      className={`bg-white rounded shadow-sm border border-dashed border-gray-300/90 transition-transform hover:scale-105 hover:shadow-md px-3 py-2 ${className}`}
+      className={`relative bg-gradient-to-r from-gray-50/40 via-gray-100/60 to-gray-50/40 hover:from-gray-100/50 hover:via-gray-200/70 hover:to-gray-100/50 dark:from-gray-800/20 dark:via-gray-700/30 dark:to-gray-800/20 dark:hover:from-gray-700/30 dark:hover:via-gray-600/40 dark:hover:to-gray-700/30 rounded-lg shadow-sm border border-dashed border-gray-200/60 dark:border-gray-300/20 hover:border-solid hover:border-gray-300/80 dark:hover:border-gray-400/30 transition-all duration-300 hover:scale-[1.02] hover:shadow-lg px-4 py-3 ${className}`}
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 px-0">
         <CardTitle className="text-sm text-gray-500 tracking-wide">
@@ -92,6 +92,18 @@ export default function KpiCard({
           </div>
         )}
       </CardContent>
+
+      {/* 噪声纹理背景 */}
+      <div
+        className="pointer-events-none absolute inset-0 bg-[size:180px] bg-repeat opacity-[0.02] dark:opacity-[0.01] rounded-lg"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='1' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* 装饰角落 */}
+      <div className="absolute z-10 w-2 h-2 rotate-45 rounded-[1px] border border-gray-200 dark:border-gray-300/20 bg-white dark:bg-gray-900 bottom-[-4px] left-[-4px]" />
+      <div className="absolute z-10 w-2 h-2 rotate-45 rounded-[1px] border border-gray-200 dark:border-gray-300/20 bg-white dark:bg-gray-900 right-[-4px] bottom-[-4px]" />
     </Card>
   );
 }
