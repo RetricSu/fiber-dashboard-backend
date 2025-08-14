@@ -1,7 +1,10 @@
-import { DashboardData, KpiData, TimeSeries, GeoNode, IspRanking } from './types';
+import { DashboardData, GeoNode, IspRanking, RustNodeInfo, RustChannelInfo, NodeResponse, ChannelResponse } from './types';
 
 // API 基础配置
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+
+// CKB 转换常量
+const SHANNONS_PER_CKB = 100_000_000;
 
 // 通用 API 请求函数
 async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -28,6 +31,15 @@ async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T
   }
 }
 
+
+// 工具函数：将十六进制字符串转换为十进制数
+function hexToDecimal(hex: string): bigint {
+  if (hex.startsWith('0x')) {
+    return BigInt(hex);
+  }
+  return BigInt('0x' + hex);
+}
+
 // 获取 Dashboard 数据 - 聚合多个后端端点
 export async function fetchDashboardData(): Promise<DashboardData> {
   if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
@@ -37,24 +49,28 @@ export async function fetchDashboardData(): Promise<DashboardData> {
   try {
     // 并行获取所有需要的数据
     const [nodesResponse, channelsResponse] = await Promise.all([
-      apiRequest<any>('/nodes_hourly?page=0'),
-      apiRequest<any>('/channels_hourly?page=0'),
+      apiRequest<NodeResponse>('/nodes_hourly?page=0'),
+      apiRequest<ChannelResponse>('/channels_hourly?page=0'),
     ]);
 
-    // 处理节点数据 - 使用正确的字段名
-    const nodes = nodesResponse.nodes || [];
-    const channels = channelsResponse.channels || [];
+    // 处理节点数据
+    const nodes: RustNodeInfo[] = nodesResponse.nodes || [];
+    const channels: RustChannelInfo[] = channelsResponse.channels || [];
 
     // 计算KPI数据
     const totalNodes = nodes.length;
     const totalChannels = channels.length;
     
-    // Handle capacity - the backend uses string format for capacity
-    const totalCapacity = channels.reduce((sum: number, channel: any) => {
-      const capacity = typeof channel.capacity === 'string' 
-        ? parseInt(channel.capacity, 10) || 0 
-        : Number(channel.capacity) || 0;
-      return sum + capacity;
+    // 处理容量数据 - 从十六进制字符串转换为十进制并转换为CKB
+    const totalCapacity = channels.reduce((sum: number, channel: RustChannelInfo) => {
+      try {
+        const capacity = channel.capacity;
+        const capacityInShannons = typeof capacity === 'string' ? hexToDecimal(capacity) : BigInt(capacity);
+        return sum + Number(capacityInShannons) / SHANNONS_PER_CKB;
+      } catch (error) {
+        console.warn('Error parsing channel capacity:', error, channel);
+        return sum;
+      }
     }, 0);
     
     const averageChannelCapacity = totalChannels > 0 ? totalCapacity / totalChannels : 0;
@@ -64,7 +80,7 @@ export async function fetchDashboardData(): Promise<DashboardData> {
     
     // 建立节点到国家的映射
     const nodeCountryMap = new Map<string, string>();
-    nodes.forEach((node: any) => {
+    nodes.forEach((node: RustNodeInfo) => {
       const country = node.country || 'Unknown';
       nodeCountryMap.set(node.node_id, country);
       
@@ -75,20 +91,24 @@ export async function fetchDashboardData(): Promise<DashboardData> {
     });
 
     // 计算每个国家的总容量（基于通道两端的节点）
-    channels.forEach((channel: any) => {
-      const capacity = typeof channel.capacity === 'string' 
-        ? parseInt(channel.capacity, 10) || 0 
-        : Number(channel.capacity) || 0;
-      
-      // 将容量分配给两个节点所在的国家
-      const node1Country = nodeCountryMap.get(channel.node1) || 'Unknown';
-      const node2Country = nodeCountryMap.get(channel.node2) || 'Unknown';
-      
-      if (countryMap.has(node1Country)) {
-        countryMap.get(node1Country)!.capacity += capacity / 2;
-      }
-      if (countryMap.has(node2Country)) {
-        countryMap.get(node2Country)!.capacity += capacity / 2;
+    channels.forEach((channel: RustChannelInfo) => {
+      try {
+        const capacity = channel.capacity;
+        const capacityInShannons = typeof capacity === 'string' ? hexToDecimal(capacity) : BigInt(capacity);
+        const capacityInCKB = Number(capacityInShannons) / SHANNONS_PER_CKB;
+        
+        // 将容量分配给两个节点所在的国家
+        const node1Country = nodeCountryMap.get(channel.node1) || 'Unknown';
+        const node2Country = nodeCountryMap.get(channel.node2) || 'Unknown';
+        
+        if (countryMap.has(node1Country)) {
+          countryMap.get(node1Country)!.capacity += capacityInCKB / 2;
+        }
+        if (countryMap.has(node2Country)) {
+          countryMap.get(node2Country)!.capacity += capacityInCKB / 2;
+        }
+      } catch (error) {
+        console.warn('Error processing channel for geo data:', error, channel);
       }
     });
 
@@ -97,7 +117,7 @@ export async function fetchDashboardData(): Promise<DashboardData> {
         country,
         countryCode: getCountryCode(country),
         nodeCount: data.count,
-        totalCapacity: Math.round(data.capacity / 100000000 * 100) / 100, // Convert to BTC and round
+        totalCapacity: Math.round(data.capacity * 100) / 100, // Round to 2 decimal places
       }))
       .sort((a, b) => b.nodeCount - a.nodeCount)
       .slice(0, 10);
@@ -106,7 +126,7 @@ export async function fetchDashboardData(): Promise<DashboardData> {
     const ispMap = new Map<string, { count: number; capacity: number }>();
     
     // 初始化ISP映射
-    nodes.forEach((node: any) => {
+    nodes.forEach((node: RustNodeInfo) => {
       const isp = extractISPFromAddresses(node.addresses || []) || 'Unknown ISP';
       if (!ispMap.has(isp)) {
         ispMap.set(isp, { count: 0, capacity: 0 });
@@ -115,23 +135,27 @@ export async function fetchDashboardData(): Promise<DashboardData> {
     });
 
     // 分配容量到ISP
-    channels.forEach((channel: any) => {
-      const capacity = typeof channel.capacity === 'string' 
-        ? parseInt(channel.capacity, 10) || 0 
-        : Number(channel.capacity) || 0;
-      
-      // 获取节点对应的ISP
-      const node1 = nodes.find((n: any) => n.node_id === channel.node1);
-      const node2 = nodes.find((n: any) => n.node_id === channel.node2);
-      
-      const isp1 = extractISPFromAddresses(node1?.addresses || []) || 'Unknown ISP';
-      const isp2 = extractISPFromAddresses(node2?.addresses || []) || 'Unknown ISP';
-      
-      if (ispMap.has(isp1)) {
-        ispMap.get(isp1)!.capacity += capacity / 2;
-      }
-      if (ispMap.has(isp2)) {
-        ispMap.get(isp2)!.capacity += capacity / 2;
+    channels.forEach((channel: RustChannelInfo) => {
+      try {
+        const capacity = channel.capacity;
+        const capacityInShannons = typeof capacity === 'string' ? hexToDecimal(capacity) : BigInt(capacity);
+        const capacityInCKB = Number(capacityInShannons) / SHANNONS_PER_CKB;
+        
+        // 获取节点对应的ISP
+        const node1 = nodes.find((n: RustNodeInfo) => n.node_id === channel.node1);
+        const node2 = nodes.find((n: RustNodeInfo) => n.node_id === channel.node2);
+        
+        const isp1 = extractISPFromAddresses(node1?.addresses || []) || 'Unknown ISP';
+        const isp2 = extractISPFromAddresses(node2?.addresses || []) || 'Unknown ISP';
+        
+        if (ispMap.has(isp1)) {
+          ispMap.get(isp1)!.capacity += capacityInCKB / 2;
+        }
+        if (ispMap.has(isp2)) {
+          ispMap.get(isp2)!.capacity += capacityInCKB / 2;
+        }
+      } catch (error) {
+        console.warn('Error processing channel for ISP data:', error, channel);
       }
     });
 
@@ -139,9 +163,9 @@ export async function fetchDashboardData(): Promise<DashboardData> {
       .map(([isp, data]) => ({
         isp,
         nodeCount: data.count,
-        totalCapacity: Math.round(data.capacity / 100000000 * 100) / 100, // Convert to BTC
+        totalCapacity: Math.round(data.capacity * 100) / 100, // Round to 2 decimal places
         averageCapacity: data.count > 0 
-          ? Math.round((data.capacity / data.count) / 100000000 * 100) / 100
+          ? Math.round((data.capacity / data.count) * 100) / 100
           : 0,
       }))
       .sort((a, b) => b.nodeCount - a.nodeCount)
@@ -161,15 +185,15 @@ export async function fetchDashboardData(): Promise<DashboardData> {
 
     return {
       kpis: {
-        totalCapacity: Math.round(totalCapacity / 100000000 * 100) / 100, // Convert to BTC
+        totalCapacity: Math.round(totalCapacity * 100) / 100, // Already in CKB, round to 2 decimal places
         totalNodes,
         totalChannels,
-        averageChannelCapacity: Math.round(averageChannelCapacity / 100000000 * 100) / 100, // Convert to BTC
+        averageChannelCapacity: Math.round(averageChannelCapacity * 100) / 100, // Already in CKB
         networkGrowth: 12.5, // Placeholder - can be calculated from historical data
       },
       timeSeries: [
         {
-          label: 'Network Capacity (BTC)',
+          label: 'Network Capacity (CKB)',
           data: timeSeriesData,
         },
       ],
@@ -187,53 +211,53 @@ const generateMockData = (): DashboardData => {
   const now = new Date();
   const timeSeriesData = [];
   
-  // 生成过去30天的时间序列数据
+  // 生成过去30天的时间序列数据 (CKB values)
   for (let i = 29; i >= 0; i--) {
     const date = new Date(now);
     date.setDate(date.getDate() - i);
     timeSeriesData.push({
       timestamp: date.toISOString(),
-      value: Math.floor(Math.random() * 1000) + 5000,
+      value: Math.floor(Math.random() * 500000) + 1000000, // CKB values instead of BTC
     });
   }
 
   return {
     kpis: {
-      totalCapacity: 15420.5,
+      totalCapacity: 1542050.75, // CKB values (much larger than BTC)
       totalNodes: 18743,
       totalChannels: 89234,
-      averageChannelCapacity: 0.173,
+      averageChannelCapacity: 17.28, // CKB per channel
       networkGrowth: 12.5,
     },
     timeSeries: [
       {
-        label: 'Network Capacity (BTC)',
+        label: 'Network Capacity (CKB)',
         data: timeSeriesData,
       },
     ],
     geoNodes: [
-      { country: 'United States', countryCode: 'US', nodeCount: 3241, totalCapacity: 2340.5 },
-      { country: 'Germany', countryCode: 'DE', nodeCount: 2156, totalCapacity: 1890.2 },
-      { country: 'Netherlands', countryCode: 'NL', nodeCount: 1892, totalCapacity: 1567.8 },
-      { country: 'United Kingdom', countryCode: 'GB', nodeCount: 1654, totalCapacity: 1345.6 },
-      { country: 'Canada', countryCode: 'CA', nodeCount: 1432, totalCapacity: 1123.4 },
-      { country: 'France', countryCode: 'FR', nodeCount: 1234, totalCapacity: 987.6 },
-      { country: 'Japan', countryCode: 'JP', nodeCount: 1156, totalCapacity: 876.5 },
-      { country: 'Australia', countryCode: 'AU', nodeCount: 987, totalCapacity: 765.4 },
-      { country: 'Switzerland', countryCode: 'CH', nodeCount: 876, totalCapacity: 654.3 },
-      { country: 'Singapore', countryCode: 'SG', nodeCount: 765, totalCapacity: 543.2 },
+      { country: 'United States', countryCode: 'US', nodeCount: 3241, totalCapacity: 234050.5 },
+      { country: 'Germany', countryCode: 'DE', nodeCount: 2156, totalCapacity: 189020.2 },
+      { country: 'Netherlands', countryCode: 'NL', nodeCount: 1892, totalCapacity: 156780.8 },
+      { country: 'United Kingdom', countryCode: 'GB', nodeCount: 1654, totalCapacity: 134560.6 },
+      { country: 'Canada', countryCode: 'CA', nodeCount: 1432, totalCapacity: 112340.4 },
+      { country: 'France', countryCode: 'FR', nodeCount: 1234, totalCapacity: 98760.6 },
+      { country: 'Japan', countryCode: 'JP', nodeCount: 1156, totalCapacity: 87650.5 },
+      { country: 'Australia', countryCode: 'AU', nodeCount: 987, totalCapacity: 76540.4 },
+      { country: 'Switzerland', countryCode: 'CH', nodeCount: 876, totalCapacity: 65430.3 },
+      { country: 'Singapore', countryCode: 'SG', nodeCount: 765, totalCapacity: 54320.2 },
     ],
     ispRankings: [
-      { isp: 'Cloudflare', nodeCount: 2341, totalCapacity: 1890.5, averageCapacity: 0.808 },
-      { isp: 'DigitalOcean', nodeCount: 2156, totalCapacity: 1678.9, averageCapacity: 0.778 },
-      { isp: 'AWS', nodeCount: 1987, totalCapacity: 1456.7, averageCapacity: 0.733 },
-      { isp: 'OVH', nodeCount: 1765, totalCapacity: 1234.5, averageCapacity: 0.699 },
-      { isp: 'Hetzner', nodeCount: 1543, totalCapacity: 1123.4, averageCapacity: 0.728 },
-      { isp: 'Linode', nodeCount: 1321, totalCapacity: 987.6, averageCapacity: 0.748 },
-      { isp: 'Vultr', nodeCount: 1198, totalCapacity: 876.5, averageCapacity: 0.732 },
-      { isp: 'Google Cloud', nodeCount: 1087, totalCapacity: 765.4, averageCapacity: 0.704 },
-      { isp: 'Azure', nodeCount: 976, totalCapacity: 654.3, averageCapacity: 0.670 },
-      { isp: 'Scaleway', nodeCount: 865, totalCapacity: 543.2, averageCapacity: 0.628 },
+      { isp: 'Cloudflare', nodeCount: 2341, totalCapacity: 189050.5, averageCapacity: 80.8 },
+      { isp: 'DigitalOcean', nodeCount: 2156, totalCapacity: 167890.9, averageCapacity: 77.8 },
+      { isp: 'AWS', nodeCount: 1987, totalCapacity: 145670.7, averageCapacity: 73.3 },
+      { isp: 'OVH', nodeCount: 1765, totalCapacity: 123450.5, averageCapacity: 69.9 },
+      { isp: 'Hetzner', nodeCount: 1543, totalCapacity: 112340.4, averageCapacity: 72.8 },
+      { isp: 'Linode', nodeCount: 1321, totalCapacity: 98760.6, averageCapacity: 74.8 },
+      { isp: 'Vultr', nodeCount: 1198, totalCapacity: 87650.5, averageCapacity: 73.2 },
+      { isp: 'Google Cloud', nodeCount: 1087, totalCapacity: 76540.4, averageCapacity: 70.4 },
+      { isp: 'Azure', nodeCount: 976, totalCapacity: 65430.3, averageCapacity: 67.0 },
+      { isp: 'Scaleway', nodeCount: 865, totalCapacity: 54320.2, averageCapacity: 62.8 },
     ],
   };
 };
@@ -303,13 +327,13 @@ export async function fetchIspRankingData(): Promise<DashboardData['ispRankings'
 }
 
 // 获取原始节点数据
-export async function fetchNodesRaw(page = 0): Promise<any> {
+export async function fetchNodesRaw(page = 0): Promise<NodeResponse> {
   if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
     return { nodes: [], next_page: 0 };
   }
   
   try {
-    return await apiRequest(`/nodes_hourly?page=${page}`);
+    return await apiRequest<NodeResponse>(`/nodes_hourly?page=${page}`);
   } catch (error) {
     console.error('Failed to fetch raw nodes:', error);
     return { nodes: [], next_page: 0 };
@@ -317,13 +341,13 @@ export async function fetchNodesRaw(page = 0): Promise<any> {
 }
 
 // 获取原始通道数据
-export async function fetchChannelsRaw(page = 0): Promise<any> {
+export async function fetchChannelsRaw(page = 0): Promise<ChannelResponse> {
   if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
     return { channels: [], next_page: 0 };
   }
   
   try {
-    return await apiRequest(`/channels_hourly?page=${page}`);
+    return await apiRequest<ChannelResponse>(`/channels_hourly?page=${page}`);
   } catch (error) {
     console.error('Failed to fetch raw channels:', error);
     return { channels: [], next_page: 0 };

@@ -63,7 +63,7 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
 
     const option: echarts.EChartsOption = {
       title: {
-        text: 'Lightning Network Nodes by Country',
+        text: 'CKB Lightning Network Nodes by Country',
         left: 'center',
         textStyle: {
           color: 'var(--foreground)',
@@ -81,7 +81,7 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
         formatter: (params: unknown) => {
           const param = params as { name: string; data?: { value: number; capacity: number } };
           if (param.data) {
-            return `${param.name}<br/>Nodes: ${param.data.value}<br/>Capacity: ${param.data.capacity.toFixed(2)} BTC`;
+            return `${param.name}<br/>Nodes: ${param.data.value}<br/>Capacity: ${param.data.capacity.toFixed(2)} CKB`;
           }
           return param.name;
         },
@@ -102,7 +102,7 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
       },
       series: [
         {
-          name: 'Lightning Nodes',
+          name: 'CKB Lightning Nodes',
           type: 'map',
           map: 'world',
           roam: true,

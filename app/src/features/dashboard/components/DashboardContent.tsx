@@ -55,7 +55,7 @@ export default function DashboardContent() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <KpiCard
           title="Total Capacity"
-          value={`${kpiData?.totalCapacity.toFixed(1) || '0.0'} BTC`}
+          value={`${kpiData?.totalCapacity.toFixed(1) || '0.0'} CKB`}
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<Zap className="h-4 w-4" />}
@@ -76,7 +76,7 @@ export default function DashboardContent() {
         />
         <KpiCard
           title="Avg Channel Capacity"
-          value={`${kpiData?.averageChannelCapacity.toFixed(3) || '0.000'} BTC`}
+          value={`${kpiData?.averageChannelCapacity.toFixed(2) || '0.00'} CKB`}
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<BarChart3 className="h-4 w-4" />}

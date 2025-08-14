@@ -40,7 +40,7 @@ export default function IspRankingChart({ data, height = '400px', className = ''
 
     const option: echarts.EChartsOption = {
       title: {
-        text: 'Top ISPs by Lightning Network Nodes',
+        text: 'Top ISPs by CKB Lightning Network Nodes',
         left: 'center',
         textStyle: {
           color: 'var(--foreground)',
@@ -61,7 +61,7 @@ export default function IspRankingChart({ data, height = '400px', className = ''
         formatter: (params: unknown) => {
           const paramArray = Array.isArray(params) ? params : [params];
           const data = paramArray[0] as { name: string; value: number; dataIndex: number };
-          return `${data.name}<br/>Nodes: ${data.value}<br/>Capacity: ${sortedData[data.dataIndex].totalCapacity.toFixed(2)} BTC<br/>Avg Capacity: ${sortedData[data.dataIndex].averageCapacity.toFixed(3)} BTC`;
+          return `${data.name}<br/>Nodes: ${data.value}<br/>Capacity: ${sortedData[data.dataIndex].totalCapacity.toFixed(2)} CKB<br/>Avg Capacity: ${sortedData[data.dataIndex].averageCapacity.toFixed(2)} CKB`;
         },
       },
       grid: {

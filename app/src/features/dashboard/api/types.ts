@@ -77,3 +77,31 @@ export const ChannelResponseSchema = z.object({
 
 export type NodeResponse = z.infer<typeof NodeResponseSchema>;
 export type ChannelResponse = z.infer<typeof ChannelResponseSchema>;
+
+// Rust backend type definitions
+export interface RustNodeInfo {
+  node_id: string;
+  node_name: string;
+  addresses: string[];
+  commit_timestamp: string;
+  announce_timestamp: string;
+  chain_hash: string;
+  auto_accept_min_ckb_funding_amount: string;
+  country?: string;
+  city?: string;
+  region?: string;
+  loc?: string;
+}
+
+export interface RustChannelInfo {
+  channel_outpoint: string;
+  node1: string;
+  node2: string;
+  commit_timestamp: string;
+  created_timestamp: string;
+  capacity: string;
+  chain_hash: string;
+  udt_type_script?: unknown;
+  update_info_of_node1?: unknown;
+  update_info_of_node2?: unknown;
+}

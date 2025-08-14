@@ -37,7 +37,7 @@ export default function TimeSeriesChart({ data, height = '400px', className = ''
 
     const option: echarts.EChartsOption = {
       title: {
-        text: 'Network Capacity Over Time',
+        text: 'CKB Network Capacity Over Time',
         left: 'center',
         textStyle: {
           color: 'var(--foreground)',
@@ -58,7 +58,7 @@ export default function TimeSeriesChart({ data, height = '400px', className = ''
           if (firstParam && Array.isArray(firstParam.value)) {
             const date = new Date(firstParam.value[0]).toLocaleDateString();
             const value = Number(firstParam.value[1]).toFixed(2);
-            return `${date}<br/>${firstParam.seriesName}: ${value} BTC`;
+            return `${date}<br/>${firstParam.seriesName}: ${value} CKB`;
           }
           return '';
         },
@@ -96,7 +96,7 @@ export default function TimeSeriesChart({ data, height = '400px', className = ''
         },
         axisLabel: {
           color: 'var(--muted-foreground)',
-          formatter: '{value} BTC',
+          formatter: '{value} CKB',
         },
         splitLine: {
           lineStyle: {
