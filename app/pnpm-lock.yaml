@@ -7,6 +7,9 @@ settings:
 importers:
   .:
     dependencies:
+      "@fontsource/iosevka":
+        specifier: 5.1.0
+        version: 5.1.0
       "@radix-ui/react-separator":
         specifier: ^1.1.7
         version: 1.1.7(@types/react-dom@19.1.7(@types/react@19.1.10))(@types/react@19.1.10)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -675,6 +678,12 @@ packages:
         integrity: sha512-Z5kJ+wU3oA7MMIqVR9tyZRtjYPr4OC004Q4Rw7pgOKUOKkJfZ3O24nz3WYfGRpMDNmcOi3TwQOmgm7B7Tpii0w==,
       }
     engines: { node: ^18.18.0 || ^20.9.0 || >=21.1.0 }
+
+  "@fontsource/iosevka@5.1.0":
+    resolution:
+      {
+        integrity: sha512-wfo4Tzbb3Lz3Zf+UMF5c/bEQL5enPJ7LT83q/UQxbgXtg+BtleIETkziIwP8lZsw8MwhSou8HVCmSZnY0sfiCw==,
+      }
 
   "@humanfs/core@0.19.1":
     resolution:
@@ -5426,6 +5435,8 @@ snapshots:
     dependencies:
       "@eslint/core": 0.15.2
       levn: 0.4.1
+
+  "@fontsource/iosevka@5.1.0": {}
 
   "@humanfs/core@0.19.1": {}
 
