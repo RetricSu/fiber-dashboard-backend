@@ -63,3 +63,17 @@ export const ApiResponseSchema = z.object({
 });
 
 export type ApiResponse = z.infer<typeof ApiResponseSchema>;
+
+// Backend API response types
+export const NodeResponseSchema = z.object({
+  next_page: z.number(),
+  nodes: z.array(z.any()),
+});
+
+export const ChannelResponseSchema = z.object({
+  next_page: z.number(),
+  channels: z.array(z.any()),
+});
+
+export type NodeResponse = z.infer<typeof NodeResponseSchema>;
+export type ChannelResponse = z.infer<typeof ChannelResponseSchema>;
