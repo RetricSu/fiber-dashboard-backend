@@ -81,14 +81,15 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
         formatter: (params: unknown) => {
           const param = params as { name: string; data?: { value: number; capacity: number } };
           if (param.data) {
-            return `${param.name}<br/>Nodes: ${param.data.value}<br/>Capacity: ${param.data.capacity.toFixed(2)} CKB`;
+            const capacity = param.data.capacity || 0;
+            return `${param.name}<br/>Nodes: ${param.data.value}<br/>Capacity: ${capacity.toFixed(2)} CKB`;
           }
           return param.name;
         },
       },
       visualMap: {
         min: 0,
-        max: Math.max(...data.map(item => item.nodeCount)),
+        max: data.length > 0 ? Math.max(...data.map(item => item.nodeCount)) : 1,
         left: 'left',
         top: 'bottom',
         text: ['High', 'Low'],

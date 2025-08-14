@@ -117,8 +117,9 @@ export async function fetchDashboardData(): Promise<DashboardData> {
         country,
         countryCode: getCountryCode(country),
         nodeCount: data.count,
-        totalCapacity: Math.round(data.capacity * 100) / 100, // Round to 2 decimal places
+        totalCapacity: Math.round(Math.max(0, data.capacity) * 100) / 100, // Ensure non-negative
       }))
+      .filter(item => item.countryCode !== 'UNKNOWN')
       .sort((a, b) => b.nodeCount - a.nodeCount)
       .slice(0, 10);
 
@@ -262,8 +263,14 @@ const generateMockData = (): DashboardData => {
   };
 };
 
-// Helper function to get country code from country name
+// Helper function to get country code from country name or code
 function getCountryCode(country: string): string {
+  // If already a 2-letter country code, return as-is
+  if (country && country.length === 2) {
+    return country.toUpperCase();
+  }
+  
+  // Map full country names to codes
   const countryCodes: Record<string, string> = {
     'United States': 'US',
     'Germany': 'DE',
@@ -280,8 +287,11 @@ function getCountryCode(country: string): string {
     'Brazil': 'BR',
     'India': 'IN',
     'South Korea': 'KR',
+    'Hong Kong': 'HK',
+    'South Africa': 'ZA',
+    'Indonesia': 'ID',
   };
-  return countryCodes[country] || 'UNKNOWN';
+  return countryCodes[country] || country || 'UNKNOWN';
 }
 
 // Helper function to extract ISP from addresses
