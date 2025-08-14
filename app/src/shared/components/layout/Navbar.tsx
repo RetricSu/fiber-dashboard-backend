@@ -3,14 +3,16 @@
 import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
-import { 
-  Zap, 
-  Network, 
-  BarChart3, 
-  Globe, 
-  Menu, 
+import {
+  Zap,
+  Network,
+  BarChart3,
+  Globe,
+  Menu,
   X,
-  ExternalLink 
+  ExternalLink,
+  Search,
+  Keyboard,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -29,17 +31,17 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <nav className="bg-card/50 backdrop-blur-sm border-b border-border/50 sticky top-0 z-50">
+    <nav className="bg-white/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50 shadow-zed">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <Link href="/" className="flex items-center space-x-2 group">
-              <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
+              <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-all duration-200 group-hover:scale-105">
                 <Zap className="h-5 w-5 text-primary" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-lg font-bold text-foreground">
+                <h1 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
                   Lightning Dashboard
                 </h1>
                 <p className="text-xs text-muted-foreground">
@@ -47,14 +49,17 @@ export default function Navbar() {
                 </p>
               </div>
             </Link>
-            <Badge variant="secondary" className="hidden md:inline-flex">
+            <Badge
+              variant="secondary"
+              className="hidden md:inline-flex bg-primary/10 text-primary border-primary/20"
+            >
               Beta
             </Badge>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            {navigation.map((item) => {
+            {navigation.map(item => {
               const Icon = item.icon;
               return (
                 <Button
@@ -62,40 +67,65 @@ export default function Navbar() {
                   variant="ghost"
                   size="sm"
                   asChild
-                  className="flex items-center space-x-2"
+                  className="flex items-center space-x-2 hover:bg-primary/5 hover:text-primary transition-all duration-200"
                 >
                   <Link href={item.href}>
                     <Icon className="h-4 w-4" />
-                    <span>{item.name}</span>
+                    <span className="font-medium">{item.name}</span>
                   </Link>
                 </Button>
               );
             })}
           </div>
 
-          {/* External Links */}
-          <div className="hidden lg:flex items-center space-x-2">
-            {externalLinks.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Button
-                  key={item.name}
-                  variant="outline"
-                  size="sm"
-                  asChild
-                  className="flex items-center space-x-2"
-                >
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
+          {/* Right side actions */}
+          <div className="hidden lg:flex items-center space-x-3">
+            {/* Search */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center space-x-2 text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-all duration-200"
+            >
+              <Search className="h-4 w-4" />
+              <span className="text-sm">Search</span>
+              <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                <Keyboard className="h-3 w-3" />
+                <span>⌘K</span>
+              </div>
+            </Button>
+
+            {/* External Links */}
+            <div className="flex items-center space-x-2">
+              {externalLinks.map(item => {
+                const Icon = item.icon;
+                return (
+                  <Button
+                    key={item.name}
+                    variant="outline"
+                    size="sm"
+                    asChild
+                    className="flex items-center space-x-2 border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
                   >
-                    <Icon className="h-4 w-4" />
-                    <span>{item.name}</span>
-                  </a>
-                </Button>
-              );
-            })}
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Icon className="h-4 w-4" />
+                      <span className="font-medium">{item.name}</span>
+                    </a>
+                  </Button>
+                );
+              })}
+            </div>
+
+            {/* Download Button */}
+            <Button
+              size="sm"
+              className="bg-primary hover:bg-primary/90 text-white font-medium px-4 py-2 rounded-lg shadow-zed hover:shadow-zed-lg transition-all duration-200"
+            >
+              Download
+            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -104,6 +134,7 @@ export default function Navbar() {
               variant="ghost"
               size="sm"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="hover:bg-primary/5 hover:text-primary transition-all duration-200"
             >
               {mobileMenuOpen ? (
                 <X className="h-5 w-5" />
@@ -116,33 +147,33 @@ export default function Navbar() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t border-border/50 bg-card/50 backdrop-blur-sm">
+          <div className="md:hidden border-t border-border/50 bg-white/95 backdrop-blur-md shadow-zed">
             <div className="px-2 pt-2 pb-3 space-y-1">
-              {navigation.map((item) => {
+              {navigation.map(item => {
                 const Icon = item.icon;
                 return (
                   <Button
                     key={item.name}
                     variant="ghost"
-                    className="w-full justify-start flex items-center space-x-3"
+                    className="w-full justify-start flex items-center space-x-3 hover:bg-primary/5 hover:text-primary transition-all duration-200"
                     asChild
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <Link href={item.href}>
                       <Icon className="h-4 w-4" />
-                      <span>{item.name}</span>
+                      <span className="font-medium">{item.name}</span>
                     </Link>
                   </Button>
                 );
               })}
               <div className="pt-2 border-t border-border/50">
-                {externalLinks.map((item) => {
+                {externalLinks.map(item => {
                   const Icon = item.icon;
                   return (
                     <Button
                       key={item.name}
                       variant="outline"
-                      className="w-full justify-start flex items-center space-x-3 mt-1"
+                      className="w-full justify-start flex items-center space-x-3 mt-1 border-border/50 hover:border-primary/50 hover:bg-primary/5 transition-all duration-200"
                       asChild
                     >
                       <a
@@ -151,11 +182,14 @@ export default function Navbar() {
                         rel="noopener noreferrer"
                       >
                         <Icon className="h-4 w-4" />
-                        <span>{item.name}</span>
+                        <span className="font-medium">{item.name}</span>
                       </a>
                     </Button>
                   );
                 })}
+                <Button className="w-full justify-start flex items-center space-x-3 mt-2 bg-primary hover:bg-primary/90 text-white font-medium">
+                  <span>Download</span>
+                </Button>
               </div>
             </div>
           </div>

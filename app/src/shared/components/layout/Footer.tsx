@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
-import { 
-  Zap, 
-  Github, 
-  Twitter, 
+import {
+  Zap,
+  Github,
+  Twitter,
   ExternalLink,
-  Heart 
+  Heart,
+  Mail,
+  MessageCircle,
 } from "lucide-react";
 
 const footerLinks = {
@@ -30,22 +32,24 @@ const footerLinks = {
 const socialLinks = [
   { name: "GitHub", href: "https://github.com", icon: Github },
   { name: "Twitter", href: "https://twitter.com", icon: Twitter },
+  { name: "Discord", href: "https://discord.gg", icon: MessageCircle },
+  { name: "Email", href: "mailto:contact@example.com", icon: Mail },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-card/30 border-t border-border/50 mt-auto">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="bg-white/50 backdrop-blur-sm border-t border-border/50 mt-auto">
+      <div className="container mx-auto px-4 py-16">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand Section */}
-          <div className="space-y-4">
-            <Link href="/" className="flex items-center space-x-2 group">
-              <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                <Zap className="h-5 w-5 text-primary" />
+          <div className="space-y-6">
+            <Link href="/" className="flex items-center space-x-3 group">
+              <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-all duration-200 group-hover:scale-105">
+                <Zap className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">
+                <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">
                   Lightning Dashboard
                 </h3>
                 <p className="text-sm text-muted-foreground">
@@ -53,21 +57,46 @@ export default function Footer() {
                 </p>
               </div>
             </Link>
-            <p className="text-sm text-muted-foreground">
-              Comprehensive insights into the Lightning Network infrastructure, 
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Comprehensive insights into the Lightning Network infrastructure,
               providing real-time data and analytics for network participants.
             </p>
+            <div className="flex items-center space-x-4">
+              {socialLinks.map(link => {
+                const Icon = link.icon;
+                return (
+                  <Button
+                    key={link.name}
+                    variant="ghost"
+                    size="sm"
+                    asChild
+                    className="h-9 w-9 p-0 hover:bg-primary/10 hover:text-primary transition-all duration-200"
+                  >
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={link.name}
+                    >
+                      <Icon className="h-4 w-4" />
+                    </a>
+                  </Button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Product Links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Product</h4>
-            <ul className="space-y-2">
-              {footerLinks.product.map((link) => (
+            <h4 className="font-semibold text-foreground mb-6 text-lg">
+              Product
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.product.map(link => (
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium"
                   >
                     {link.name}
                   </Link>
@@ -78,16 +107,18 @@ export default function Footer() {
 
           {/* Resources Links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Resources</h4>
-            <ul className="space-y-2">
-              {footerLinks.resources.map((link) => (
+            <h4 className="font-semibold text-foreground mb-6 text-lg">
+              Resources
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.resources.map(link => (
                 <li key={link.name}>
                   {link.external ? (
                     <a
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-1"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 flex items-center space-x-2 font-medium"
                     >
                       <span>{link.name}</span>
                       <ExternalLink className="h-3 w-3" />
@@ -95,7 +126,7 @@ export default function Footer() {
                   ) : (
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium"
                     >
                       {link.name}
                     </Link>
@@ -107,16 +138,18 @@ export default function Footer() {
 
           {/* Community Links */}
           <div>
-            <h4 className="font-semibold text-foreground mb-4">Community</h4>
-            <ul className="space-y-2">
-              {footerLinks.community.map((link) => (
+            <h4 className="font-semibold text-foreground mb-6 text-lg">
+              Community
+            </h4>
+            <ul className="space-y-3">
+              {footerLinks.community.map(link => (
                 <li key={link.name}>
                   {link.external ? (
                     <a
                       href={link.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center space-x-1"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 flex items-center space-x-2 font-medium"
                     >
                       <span>{link.name}</span>
                       <ExternalLink className="h-3 w-3" />
@@ -124,7 +157,7 @@ export default function Footer() {
                   ) : (
                     <Link
                       href={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-sm text-muted-foreground hover:text-primary transition-colors duration-200 font-medium"
                     >
                       {link.name}
                     </Link>
@@ -135,40 +168,37 @@ export default function Footer() {
           </div>
         </div>
 
-        <Separator className="mb-8" />
+        <Separator className="mb-8 bg-border/50" />
 
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           {/* Copyright */}
           <div className="flex items-center space-x-2 text-sm text-muted-foreground">
             <span>© 2024 Lightning Dashboard. Made with</span>
-            <Heart className="h-4 w-4 text-red-500" />
+            <Heart className="h-4 w-4 text-red-500 animate-pulse" />
             <span>for the Lightning Network community.</span>
           </div>
 
-          {/* Social Links */}
-          <div className="flex items-center space-x-2">
-            {socialLinks.map((link) => {
-              const Icon = link.icon;
-              return (
-                <Button
-                  key={link.name}
-                  variant="ghost"
-                  size="sm"
-                  asChild
-                  className="h-8 w-8 p-0"
-                >
-                  <a
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={link.name}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </a>
-                </Button>
-              );
-            })}
+          {/* Additional Links */}
+          <div className="flex items-center space-x-6 text-sm">
+            <Link
+              href="/privacy"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
+              Terms of Service
+            </Link>
+            <Link
+              href="/status"
+              className="text-muted-foreground hover:text-primary transition-colors duration-200"
+            >
+              Status
+            </Link>
           </div>
         </div>
       </div>

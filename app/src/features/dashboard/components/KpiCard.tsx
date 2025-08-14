@@ -16,6 +16,8 @@ interface KpiCardProps {
   changeLabel?: string;
   icon?: React.ReactNode;
   className?: string;
+  iconBg?: string;
+  iconColor?: string;
 }
 
 export default function KpiCard({
@@ -25,6 +27,8 @@ export default function KpiCard({
   changeLabel,
   icon,
   className = "",
+  iconBg = "bg-primary/10",
+  iconColor = "text-primary",
 }: KpiCardProps) {
   const getChangeIcon = () => {
     if (!change) return <Minus className="h-4 w-4 text-muted-foreground" />;
@@ -41,27 +45,31 @@ export default function KpiCard({
   };
 
   return (
-    <Card className={`group hover:shadow-lg transition-all duration-200 hover:-translate-y-1 ${className}`}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+    <Card
+      className={`group hover:shadow-zed-lg transition-all duration-300 hover:-translate-y-1 border-0 shadow-zed bg-white/80 backdrop-blur-sm ${className}`}
+    >
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
         <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
           {title}
         </CardTitle>
         {icon && (
-          <div className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors">
-            {icon}
+          <div
+            className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center group-hover:scale-110 transition-all duration-200`}
+          >
+            <div className={iconColor}>{icon}</div>
           </div>
         )}
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold group-hover:text-primary transition-colors">
+      <CardContent className="pt-0">
+        <div className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
           {value}
         </div>
         {change !== undefined && (
-          <div className="flex items-center space-x-1 pt-1">
+          <div className="flex items-center space-x-2">
             {getChangeIcon()}
             <Badge
               variant="secondary"
-              className={`text-xs ${getChangeColor()} group-hover:scale-105 transition-transform`}
+              className={`text-xs font-medium ${getChangeColor()} bg-white/50 backdrop-blur-sm border border-white/20 group-hover:scale-105 transition-transform`}
             >
               {change > 0 ? "+" : ""}
               {change.toFixed(1)}%
