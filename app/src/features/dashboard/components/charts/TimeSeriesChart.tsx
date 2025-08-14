@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import * as echarts from 'echarts';
-import { TimeSeries } from '../../api/types';
+import { useEffect, useRef } from "react";
+import * as echarts from "echarts";
+import { TimeSeries } from "../../api/types";
 
 interface TimeSeriesChartProps {
   data: TimeSeries[];
@@ -10,7 +10,11 @@ interface TimeSeriesChartProps {
   className?: string;
 }
 
-export default function TimeSeriesChart({ data, height = '400px', className = '' }: TimeSeriesChartProps) {
+export default function TimeSeriesChart({
+  data,
+  height = "400px",
+  className = "",
+}: TimeSeriesChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
 
@@ -24,10 +28,10 @@ export default function TimeSeriesChart({ data, height = '400px', className = ''
     const handleResize = () => {
       chartInstance.current?.resize();
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       chartInstance.current?.dispose();
     };
   }, []);
@@ -37,77 +41,80 @@ export default function TimeSeriesChart({ data, height = '400px', className = ''
 
     const option: echarts.EChartsOption = {
       title: {
-        text: 'CKB Network Capacity Over Time',
-        left: 'center',
+        text: "CKB Network Capacity Over Time",
+        left: "center",
         textStyle: {
-          color: 'var(--foreground)',
+          color: "var(--foreground)",
           fontSize: 16,
-          fontWeight: 'normal',
+          fontWeight: "normal",
         },
       },
       tooltip: {
-        trigger: 'axis',
-        backgroundColor: 'var(--background)',
-        borderColor: 'var(--border)',
+        trigger: "axis",
+        backgroundColor: "var(--background)",
+        borderColor: "var(--border)",
         textStyle: {
-          color: 'var(--foreground)',
+          color: "var(--foreground)",
         },
         formatter: (params: unknown) => {
           const paramArray = Array.isArray(params) ? params : [params];
-          const firstParam = paramArray[0] as { value: [string | number, number]; seriesName: string };
+          const firstParam = paramArray[0] as {
+            value: [string | number, number];
+            seriesName: string;
+          };
           if (firstParam && Array.isArray(firstParam.value)) {
             const date = new Date(firstParam.value[0]).toLocaleDateString();
             const value = Number(firstParam.value[1]).toFixed(2);
             return `${date}<br/>${firstParam.seriesName}: ${value} CKB`;
           }
-          return '';
+          return "";
         },
       },
       legend: {
         data: data.map(series => series.label),
         top: 30,
         textStyle: {
-          color: 'var(--foreground)',
+          color: "var(--foreground)",
         },
       },
       grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
         containLabel: true,
       },
       xAxis: {
-        type: 'time',
+        type: "time",
         axisLine: {
           lineStyle: {
-            color: 'var(--border)',
+            color: "var(--border)",
           },
         },
         axisLabel: {
-          color: 'var(--muted-foreground)',
+          color: "var(--muted-foreground)",
         },
       },
       yAxis: {
-        type: 'value',
+        type: "value",
         axisLine: {
           lineStyle: {
-            color: 'var(--border)',
+            color: "var(--border)",
           },
         },
         axisLabel: {
-          color: 'var(--muted-foreground)',
-          formatter: '{value} CKB',
+          color: "var(--muted-foreground)",
+          formatter: "{value} CKB",
         },
         splitLine: {
           lineStyle: {
-            color: 'var(--border)',
+            color: "var(--border)",
             opacity: 0.3,
           },
         },
       },
       series: data.map((series, index) => ({
         name: series.label,
-        type: 'line',
+        type: "line",
         smooth: true,
         areaStyle: {
           opacity: 0.3,
@@ -127,11 +134,5 @@ export default function TimeSeriesChart({ data, height = '400px', className = ''
     chartInstance.current.setOption(option);
   }, [data]);
 
-  return (
-    <div 
-      ref={chartRef} 
-      style={{ height }} 
-      className={className}
-    />
-  );
+  return <div ref={chartRef} style={{ height }} className={className} />;
 }

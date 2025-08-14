@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // KPI 数据类型
 export const KpiDataSchema = z.object({

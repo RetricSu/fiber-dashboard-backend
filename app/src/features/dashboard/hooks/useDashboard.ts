@@ -1,5 +1,11 @@
-import { QueryClient } from '@tanstack/react-query';
-import { fetchDashboardData, fetchKpiData, fetchTimeSeriesData, fetchGeoNodeData, fetchIspRankingData } from '../api/client';
+import { QueryClient } from "@tanstack/react-query";
+import {
+  fetchDashboardData,
+  fetchKpiData,
+  fetchTimeSeriesData,
+  fetchGeoNodeData,
+  fetchIspRankingData,
+} from "../api/client";
 
 // 创建 QueryClient 实例
 export const queryClient = new QueryClient({
@@ -15,11 +21,11 @@ export const queryClient = new QueryClient({
 
 // Query Keys
 export const queryKeys = {
-  dashboard: ['dashboard'] as const,
-  kpis: ['dashboard', 'kpis'] as const,
-  timeSeries: ['dashboard', 'timeSeries'] as const,
-  geoNodes: ['dashboard', 'geoNodes'] as const,
-  ispRankings: ['dashboard', 'ispRankings'] as const,
+  dashboard: ["dashboard"] as const,
+  kpis: ["dashboard", "kpis"] as const,
+  timeSeries: ["dashboard", "timeSeries"] as const,
+  geoNodes: ["dashboard", "geoNodes"] as const,
+  ispRankings: ["dashboard", "ispRankings"] as const,
 } as const;
 
 // 预取 Dashboard 数据

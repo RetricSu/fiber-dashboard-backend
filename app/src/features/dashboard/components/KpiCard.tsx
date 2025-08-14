@@ -1,8 +1,13 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
-import { Badge } from '@/shared/components/ui/badge';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
+import { Badge } from "@/shared/components/ui/badge";
+import { TrendingUp, TrendingDown, Minus } from "lucide-react";
 
 interface KpiCardProps {
   title: string;
@@ -13,13 +18,13 @@ interface KpiCardProps {
   className?: string;
 }
 
-export default function KpiCard({ 
-  title, 
-  value, 
-  change, 
-  changeLabel, 
-  icon, 
-  className = '' 
+export default function KpiCard({
+  title,
+  value,
+  change,
+  changeLabel,
+  icon,
+  className = "",
 }: KpiCardProps) {
   const getChangeIcon = () => {
     if (!change) return <Minus className="h-4 w-4 text-muted-foreground" />;
@@ -31,8 +36,8 @@ export default function KpiCard({
   };
 
   const getChangeColor = () => {
-    if (!change) return 'text-muted-foreground';
-    return change > 0 ? 'text-green-500' : 'text-red-500';
+    if (!change) return "text-muted-foreground";
+    return change > 0 ? "text-green-500" : "text-red-500";
   };
 
   return (
@@ -41,22 +46,19 @@ export default function KpiCard({
         <CardTitle className="text-sm font-medium text-muted-foreground">
           {title}
         </CardTitle>
-        {icon && (
-          <div className="h-4 w-4 text-muted-foreground">
-            {icon}
-          </div>
-        )}
+        {icon && <div className="h-4 w-4 text-muted-foreground">{icon}</div>}
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
         {change !== undefined && (
           <div className="flex items-center space-x-1 pt-1">
             {getChangeIcon()}
-            <Badge 
-              variant="secondary" 
+            <Badge
+              variant="secondary"
               className={`text-xs ${getChangeColor()}`}
             >
-              {change > 0 ? '+' : ''}{change.toFixed(1)}%
+              {change > 0 ? "+" : ""}
+              {change.toFixed(1)}%
             </Badge>
             {changeLabel && (
               <span className="text-xs text-muted-foreground">

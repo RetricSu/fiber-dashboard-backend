@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
-import * as echarts from 'echarts';
-import { GeoNode } from '../../api/types';
-import worldGeoJson from '../../api/maps/world.json';
+import { useEffect, useRef, useState } from "react";
+import * as echarts from "echarts";
+import { GeoNode } from "../../api/types";
+import worldGeoJson from "../../api/maps/world.json";
 
 interface WorldMapChartProps {
   data: GeoNode[];
@@ -11,7 +11,11 @@ interface WorldMapChartProps {
   className?: string;
 }
 
-export default function WorldMapChart({ data, height = '500px', className = '' }: WorldMapChartProps) {
+export default function WorldMapChart({
+  data,
+  height = "500px",
+  className = "",
+}: WorldMapChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -27,10 +31,10 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
     const handleResize = () => {
       chartInstance.current?.resize();
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       chartInstance.current?.dispose();
     };
   }, []);
@@ -39,15 +43,18 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
   useEffect(() => {
     try {
       if (worldGeoJson) {
-        echarts.registerMap('world', worldGeoJson as never);
+        echarts.registerMap("world", worldGeoJson as never);
         setMapLoaded(true);
-        console.log('World map registered from local JSON, features:', (worldGeoJson as { features?: unknown[] }).features?.length);
+        console.log(
+          "World map registered from local JSON, features:",
+          (worldGeoJson as { features?: unknown[] }).features?.length
+        );
       } else {
-        setMapError('World GeoJSON not found');
+        setMapError("World GeoJSON not found");
       }
     } catch (error) {
-      console.error('Failed to register local world GeoJSON:', error);
-      setMapError(error instanceof Error ? error.message : 'Unknown error');
+      console.error("Failed to register local world GeoJSON:", error);
+      setMapError(error instanceof Error ? error.message : "Unknown error");
     }
   }, []);
 
@@ -61,25 +68,31 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
       capacity: item.totalCapacity,
     }));
 
+    console.log("mapData", mapData);
+    console.log("data", data);
+
     const option: echarts.EChartsOption = {
       title: {
-        text: 'CKB Lightning Network Nodes by Country',
-        left: 'center',
+        text: "Fiber Network Nodes by Country",
+        left: "center",
         textStyle: {
-          color: 'var(--foreground)',
+          color: "var(--foreground)",
           fontSize: 16,
-          fontWeight: 'normal',
+          fontWeight: "normal",
         },
       },
       tooltip: {
-        trigger: 'item',
-        backgroundColor: 'var(--background)',
-        borderColor: 'var(--border)',
+        trigger: "item",
+        backgroundColor: "var(--background)",
+        borderColor: "var(--border)",
         textStyle: {
-          color: 'var(--foreground)',
+          color: "var(--foreground)",
         },
         formatter: (params: unknown) => {
-          const param = params as { name: string; data?: { value: number; capacity: number } };
+          const param = params as {
+            name: string;
+            data?: { value: number; capacity: number };
+          };
           if (param.data) {
             const capacity = param.data.capacity || 0;
             const nodeCount = param.data.value || 0;
@@ -90,27 +103,28 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
       },
       visualMap: {
         min: 0,
-        max: data.length > 0 ? Math.max(...data.map(item => item.nodeCount)) : 1,
-        left: 'left',
-        top: 'bottom',
-        text: ['High', 'Low'],
+        max:
+          data.length > 0 ? Math.max(...data.map(item => item.nodeCount)) : 1,
+        left: "left",
+        top: "bottom",
+        text: ["High", "Low"],
         calculable: true,
         inRange: {
-          color: ['#e0f2fe', '#0ea5e9', '#0369a1'],
+          color: ["#e0f2fe", "#0ea5e9", "#0369a1"],
         },
         textStyle: {
-          color: 'var(--foreground)',
+          color: "var(--foreground)",
         },
       },
       series: [
         {
-          name: 'CKB Lightning Nodes',
-          type: 'map',
-          map: 'world',
+          name: "Fiber Nodes",
+          type: "map",
+          map: "world",
           roam: true,
           data: mapData,
           itemStyle: {
-            borderColor: 'var(--border)',
+            borderColor: "var(--border)",
             borderWidth: 1,
           },
           emphasis: {
@@ -118,12 +132,12 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
               show: true,
             },
             itemStyle: {
-              areaColor: '#0ea5e9',
+              areaColor: "#0ea5e9",
               shadowOffsetX: 0,
               shadowOffsetY: 0,
               shadowBlur: 20,
               borderWidth: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
+              shadowColor: "rgba(0, 0, 0, 0.5)",
             },
           },
         },
@@ -134,21 +148,23 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
   }, [data, mapLoaded]);
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div 
-        ref={chartRef} 
-        style={{ height }} 
-        className={className}
-      />
+    <div style={{ position: "relative" }}>
+      <div ref={chartRef} style={{ height }} className={className} />
       {!mapLoaded && !mapError && (
-        <div className={`${className} absolute inset-0 flex items-center justify-center pointer-events-none`}>
+        <div
+          className={`${className} absolute inset-0 flex items-center justify-center pointer-events-none`}
+        >
           <div className="text-muted-foreground">Loading world map...</div>
         </div>
       )}
       {mapError && (
-        <div className={`${className} absolute inset-0 flex items-center justify-center pointer-events-none`}>
+        <div
+          className={`${className} absolute inset-0 flex items-center justify-center pointer-events-none`}
+        >
           <div className="text-center">
-            <div className="text-destructive mb-2">Failed to load world map</div>
+            <div className="text-destructive mb-2">
+              Failed to load world map
+            </div>
             <div className="text-sm text-muted-foreground">{mapError}</div>
           </div>
         </div>

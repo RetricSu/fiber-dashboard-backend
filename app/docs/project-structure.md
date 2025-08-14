@@ -48,6 +48,7 @@ src/
 ## 核心功能
 
 ### 1. KPI 卡片
+
 - 总容量 (Total Capacity)
 - 节点数 (Total Nodes)
 - 通道数 (Total Channels)
@@ -55,17 +56,20 @@ src/
 - 网络增长率 (Network Growth)
 
 ### 2. 图表展示
+
 - **时间序列面积图**: 网络容量变化趋势
 - **世界地图**: 全球节点分布
 - **ISP 排行榜**: 柱状图展示
 
 ### 3. 数据轮询
+
 - KPI 数据: 30秒轮询
 - 时间序列: 1分钟轮询
 - 地理数据: 5分钟轮询
 - ISP 数据: 5分钟轮询
 
 ### 4. 响应式设计
+
 - 移动端适配
 - 暗色模式支持
 - 图表自适应
@@ -73,12 +77,14 @@ src/
 ## 开发指南
 
 ### 环境变量
+
 ```env
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3001/api
 NEXT_PUBLIC_USE_MOCK_DATA=true
 ```
 
 ### 开发命令
+
 ```bash
 # 开发服务器
 pnpm dev
@@ -97,12 +103,14 @@ pnpm lint
 ```
 
 ### 添加新图表
+
 1. 在 `src/components/charts/` 创建新组件
 2. 在 `src/libs/types.ts` 添加类型定义
 3. 在 `src/libs/api.ts` 添加数据获取函数
 4. 在 Dashboard 中集成新图表
 
 ### 替换真实 API
+
 1. 设置 `NEXT_PUBLIC_API_BASE_URL` 环境变量
 2. 设置 `NEXT_PUBLIC_USE_MOCK_DATA=false`
 3. 确保 API 返回符合 Zod schema 的数据格式

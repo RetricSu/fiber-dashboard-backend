@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useEffect, useRef } from 'react';
-import * as echarts from 'echarts';
-import { IspRanking } from '../../api/types';
+import { useEffect, useRef } from "react";
+import * as echarts from "echarts";
+import { IspRanking } from "../../api/types";
 
 interface IspRankingChartProps {
   data: IspRanking[];
@@ -10,7 +10,11 @@ interface IspRankingChartProps {
   className?: string;
 }
 
-export default function IspRankingChart({ data, height = '400px', className = '' }: IspRankingChartProps) {
+export default function IspRankingChart({
+  data,
+  height = "400px",
+  className = "",
+}: IspRankingChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<echarts.ECharts | null>(null);
 
@@ -24,10 +28,10 @@ export default function IspRankingChart({ data, height = '400px', className = ''
     const handleResize = () => {
       chartInstance.current?.resize();
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       chartInstance.current?.dispose();
     };
   }, []);
@@ -40,87 +44,91 @@ export default function IspRankingChart({ data, height = '400px', className = ''
 
     const option: echarts.EChartsOption = {
       title: {
-        text: 'Top ISPs by CKB Lightning Network Nodes',
-        left: 'center',
+        text: "Top ISPs by CKB Lightning Network Nodes",
+        left: "center",
         textStyle: {
-          color: 'var(--foreground)',
+          color: "var(--foreground)",
           fontSize: 16,
-          fontWeight: 'normal',
+          fontWeight: "normal",
         },
       },
       tooltip: {
-        trigger: 'axis',
+        trigger: "axis",
         axisPointer: {
-          type: 'shadow',
+          type: "shadow",
         },
-        backgroundColor: 'var(--background)',
-        borderColor: 'var(--border)',
+        backgroundColor: "var(--background)",
+        borderColor: "var(--border)",
         textStyle: {
-          color: 'var(--foreground)',
+          color: "var(--foreground)",
         },
         formatter: (params: unknown) => {
           const paramArray = Array.isArray(params) ? params : [params];
-          const data = paramArray[0] as { name: string; value: number; dataIndex: number };
+          const data = paramArray[0] as {
+            name: string;
+            value: number;
+            dataIndex: number;
+          };
           return `${data.name}<br/>Nodes: ${data.value}<br/>Capacity: ${sortedData[data.dataIndex].totalCapacity.toFixed(2)} CKB<br/>Avg Capacity: ${sortedData[data.dataIndex].averageCapacity.toFixed(2)} CKB`;
         },
       },
       grid: {
-        left: '3%',
-        right: '4%',
-        bottom: '3%',
+        left: "3%",
+        right: "4%",
+        bottom: "3%",
         containLabel: true,
       },
       xAxis: {
-        type: 'category',
+        type: "category",
         data: sortedData.map(item => item.isp),
         axisTick: {
           alignWithLabel: true,
         },
         axisLine: {
           lineStyle: {
-            color: 'var(--border)',
+            color: "var(--border)",
           },
         },
         axisLabel: {
-          color: 'var(--muted-foreground)',
+          color: "var(--muted-foreground)",
           rotate: 45,
         },
       },
       yAxis: {
-        type: 'value',
-        name: 'Number of Nodes',
+        type: "value",
+        name: "Number of Nodes",
         axisLine: {
           lineStyle: {
-            color: 'var(--border)',
+            color: "var(--border)",
           },
         },
         axisLabel: {
-          color: 'var(--muted-foreground)',
+          color: "var(--muted-foreground)",
         },
         splitLine: {
           lineStyle: {
-            color: 'var(--border)',
+            color: "var(--border)",
             opacity: 0.3,
           },
         },
       },
       series: [
         {
-          name: 'Nodes',
-          type: 'bar',
+          name: "Nodes",
+          type: "bar",
           data: sortedData.map(item => item.nodeCount),
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-              { offset: 0, color: '#0ea5e9' },
-              { offset: 1, color: '#0369a1' },
+              { offset: 0, color: "#0ea5e9" },
+              { offset: 1, color: "#0369a1" },
             ]),
             borderRadius: [4, 4, 0, 0],
           },
           emphasis: {
             itemStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: '#0284c7' },
-                { offset: 1, color: '#075985' },
+                { offset: 0, color: "#0284c7" },
+                { offset: 1, color: "#075985" },
               ]),
             },
           },
@@ -131,11 +139,5 @@ export default function IspRankingChart({ data, height = '400px', className = ''
     chartInstance.current.setOption(option);
   }, [data]);
 
-  return (
-    <div 
-      ref={chartRef} 
-      style={{ height }} 
-      className={className}
-    />
-  );
+  return <div ref={chartRef} style={{ height }} className={className} />;
 }

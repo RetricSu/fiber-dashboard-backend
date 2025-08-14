@@ -31,7 +31,7 @@
 
 ### 前置要求
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm (推荐) 或 npm
 
 ### 安装依赖
@@ -58,20 +58,23 @@ pnpm start
 ## 📊 功能模块
 
 ### 1. KPI 指标卡片
+
 - 总容量 (Total Capacity)
-- 节点数 (Total Nodes) 
+- 节点数 (Total Nodes)
 - 通道数 (Total Channels)
 - 平均通道容量 (Average Channel Capacity)
 - 网络增长率 (Network Growth)
 
 ### 2. 数据可视化
+
 - **网络容量趋势图**: 显示过去30天的容量变化
 - **全球节点分布图**: 交互式世界地图展示节点分布
 - **ISP 排行榜**: 按节点数量排序的 ISP 统计
 
 ### 3. 数据轮询
+
 - KPI 数据: 30秒轮询
-- 时间序列: 1分钟轮询  
+- 时间序列: 1分钟轮询
 - 地理数据: 5分钟轮询
 - ISP 数据: 5分钟轮询
 

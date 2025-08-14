@@ -1,114 +1,144 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>Frontend Debug</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
-        .error { color: red; }
-        .success { color: green; }
-        .data { background: #f5f5f5; padding: 10px; margin: 10px 0; }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+      .debug-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ccc;
+      }
+      .error {
+        color: red;
+      }
+      .success {
+        color: green;
+      }
+      .data {
+        background: #f5f5f5;
+        padding: 10px;
+        margin: 10px 0;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Frontend Debug - World Map Data Test</h1>
-    
+
     <div class="debug-section">
-        <h2>Backend Connectivity Test</h2>
-        <div id="backend-test">Testing...</div>
+      <h2>Backend Connectivity Test</h2>
+      <div id="backend-test">Testing...</div>
     </div>
-    
+
     <div class="debug-section">
-        <h2>Geo Data Processing</h2>
-        <div id="geo-data">Testing...</div>
+      <h2>Geo Data Processing</h2>
+      <div id="geo-data">Testing...</div>
     </div>
-    
+
     <div class="debug-section">
-        <h2>World Map Status</h2>
-        <div id="map-status">Checking...</div>
+      <h2>World Map Status</h2>
+      <div id="map-status">Checking...</div>
     </div>
 
     <script>
-        async function testBackend() {
-            const backendDiv = document.getElementById('backend-test');
-            try {
-                const response = await fetch('http://localhost:8080/nodes_hourly?page=0');
-                const data = await response.json();
-                
-                if (response.ok) {
-                    backendDiv.innerHTML = `<span class="success">✅ Backend connected - ${data.nodes?.length || 0} nodes found</span>`;
-                    return data.nodes || [];
-                } else {
-                    backendDiv.innerHTML = `<span class="error">❌ Backend error: ${response.status}</span>`;
-                    return [];
-                }
-            } catch (error) {
-                backendDiv.innerHTML = `<span class="error">❌ Backend connection failed: ${error.message}</span>`;
-                return [];
-            }
+      async function testBackend() {
+        const backendDiv = document.getElementById("backend-test");
+        try {
+          const response = await fetch(
+            "http://localhost:8080/nodes_hourly?page=0"
+          );
+          const data = await response.json();
+
+          if (response.ok) {
+            backendDiv.innerHTML = `<span class="success">✅ Backend connected - ${data.nodes?.length || 0} nodes found</span>`;
+            return data.nodes || [];
+          } else {
+            backendDiv.innerHTML = `<span class="error">❌ Backend error: ${response.status}</span>`;
+            return [];
+          }
+        } catch (error) {
+          backendDiv.innerHTML = `<span class="error">❌ Backend connection failed: ${error.message}</span>`;
+          return [];
+        }
+      }
+
+      async function processGeoData(nodes) {
+        const geoDiv = document.getElementById("geo-data");
+
+        if (!nodes || nodes.length === 0) {
+          geoDiv.innerHTML =
+            '<span class="error">❌ No nodes to process</span>';
+          return [];
         }
 
-        async function processGeoData(nodes) {
-            const geoDiv = document.getElementById('geo-data');
-            
-            if (!nodes || nodes.length === 0) {
-                geoDiv.innerHTML = '<span class="error">❌ No nodes to process</span>';
-                return [];
-            }
+        const countryMap = new Map();
+        nodes.forEach(node => {
+          const country = node.country || "Unknown";
+          if (!countryMap.has(country)) {
+            countryMap.set(country, { count: 0, capacity: 0 });
+          }
+          countryMap.get(country).count++;
+        });
 
-            const countryMap = new Map();
-            nodes.forEach(node => {
-                const country = node.country || 'Unknown';
-                if (!countryMap.has(country)) {
-                    countryMap.set(country, { count: 0, capacity: 0 });
-                }
-                countryMap.get(country).count++;
-            });
+        const geoNodes = Array.from(countryMap.entries())
+          .map(([country, data]) => ({
+            country,
+            countryCode: getCountryCode(country),
+            nodeCount: data.count,
+            totalCapacity: 0,
+          }))
+          .filter(item => item.country !== "Unknown")
+          .sort((a, b) => b.nodeCount - a.nodeCount);
 
-            const geoNodes = Array.from(countryMap.entries())
-                .map(([country, data]) => ({
-                    country,
-                    countryCode: getCountryCode(country),
-                    nodeCount: data.count,
-                    totalCapacity: 0
-                }))
-                .filter(item => item.country !== 'Unknown')
-                .sort((a, b) => b.nodeCount - a.nodeCount);
-
-            geoDiv.innerHTML = `
+        geoDiv.innerHTML = `
                 <div class="success">✅ Geo data processed: ${geoNodes.length} countries</div>
                 <div class="data">
                     <strong>Top countries:</strong><br>
-                    ${geoNodes.slice(0, 5).map(c => `${c.country}: ${c.nodeCount} nodes`).join('<br>')}
+                    ${geoNodes
+                      .slice(0, 5)
+                      .map(c => `${c.country}: ${c.nodeCount} nodes`)
+                      .join("<br>")}
                 </div>
             `;
 
-            return geoNodes;
+        return geoNodes;
+      }
+
+      function getCountryCode(country) {
+        const codes = {
+          "Hong Kong": "HK",
+          Australia: "AU",
+          "United States": "US",
+          "South Africa": "ZA",
+          Singapore: "SG",
+          Germany: "DE",
+          Brazil: "BR",
+          Indonesia: "ID",
+          Japan: "JP",
+          China: "CN",
+          Russia: "RU",
+          "United Kingdom": "GB",
+        };
+        return codes[country] || country;
+      }
+
+      async function checkMapStatus(geoNodes) {
+        const mapDiv = document.getElementById("map-status");
+
+        if (geoNodes.length === 0) {
+          mapDiv.innerHTML =
+            '<span class="error">❌ No geo data for world map</span>';
+          return;
         }
 
-        function getCountryCode(country) {
-            const codes = {
-                'Hong Kong': 'HK', 'Australia': 'AU', 'United States': 'US',
-                'South Africa': 'ZA', 'Singapore': 'SG', 'Germany': 'DE',
-                'Brazil': 'BR', 'Indonesia': 'ID', 'Japan': 'JP',
-                'China': 'CN', 'Russia': 'RU', 'United Kingdom': 'GB'
-            };
-            return codes[country] || country;
-        }
-
-        async function checkMapStatus(geoNodes) {
-            const mapDiv = document.getElementById('map-status');
-            
-            if (geoNodes.length === 0) {
-                mapDiv.innerHTML = '<span class="error">❌ No geo data for world map</span>';
-                return;
-            }
-
-            mapDiv.innerHTML = `
+        mapDiv.innerHTML = `
                 <div class="success">✅ World map should display ${geoNodes.length} countries</div>
                 <div class="data">
                     <strong>Expected world map data:</strong><br>
-                    ${geoNodes.map(c => `${c.country}: ${c.nodeCount} nodes`).join('<br>')}
+                    ${geoNodes.map(c => `${c.country}: ${c.nodeCount} nodes`).join("<br>")}
                 </div>
                 <div style="margin-top: 10px;">
                     <strong>Next steps:</strong><br>
@@ -117,16 +147,16 @@
                     3. Verify world map loads with data
                 </div>
             `;
-        }
+      }
 
-        async function runAllTests() {
-            const nodes = await testBackend();
-            const geoNodes = await processGeoData(nodes);
-            await checkMapStatus(geoNodes);
-        }
+      async function runAllTests() {
+        const nodes = await testBackend();
+        const geoNodes = await processGeoData(nodes);
+        await checkMapStatus(geoNodes);
+      }
 
-        // Run tests when page loads
-        runAllTests();
+      // Run tests when page loads
+      runAllTests();
     </script>
-</body>
+  </body>
 </html>

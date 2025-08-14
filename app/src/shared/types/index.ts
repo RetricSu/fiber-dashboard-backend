@@ -1,2 +1,2 @@
 // Shared types exports
-export * from './common';
+export * from "./common";

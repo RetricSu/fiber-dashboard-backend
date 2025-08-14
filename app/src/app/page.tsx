@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { Zap, Globe, TrendingUp, BarChart3 } from "lucide-react";
 
 export default function Home() {
@@ -12,7 +18,7 @@ export default function Home() {
             Lightning Network Dashboard
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Real-time insights into the Lightning Network infrastructure. 
+            Real-time insights into the Lightning Network infrastructure.
             Monitor network capacity, node distribution, and growth trends.
           </p>
         </div>
@@ -20,7 +26,9 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Capacity</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Capacity
+              </CardTitle>
               <Zap className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -46,7 +54,9 @@ export default function Home() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Channels</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Channels
+              </CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -59,7 +69,9 @@ export default function Home() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Avg Channel Capacity</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Avg Channel Capacity
+              </CardTitle>
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -93,8 +105,8 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Interactive world map showing node distribution by country, 
-                with capacity and growth metrics for each region.
+                Interactive world map showing node distribution by country, with
+                capacity and growth metrics for each region.
               </p>
             </CardContent>
           </Card>
@@ -111,8 +123,8 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Time series charts displaying network capacity evolution, 
-                with real-time data updates and trend analysis.
+                Time series charts displaying network capacity evolution, with
+                real-time data updates and trend analysis.
               </p>
             </CardContent>
           </Card>
@@ -129,8 +141,8 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground">
-                Rankings and statistics of Internet Service Providers 
-                hosting Lightning Network nodes and their performance metrics.
+                Rankings and statistics of Internet Service Providers hosting
+                Lightning Network nodes and their performance metrics.
               </p>
             </CardContent>
           </Card>

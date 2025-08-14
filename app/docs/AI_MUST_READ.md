@@ -6,6 +6,7 @@
 ---
 
 ## 1. 项目概览（Project Overview）
+
 - **名称**：fiber-dashbord-backend（Rust 后端） + Next.js 应用（位于 `app/`）
 - **一句话介绍**：闪电网络（Lightning Network）监控与分析：Rust 后端采集与聚合数据，TimescaleDB 存储与连续聚合；Next.js 前端可视化展示网络容量、节点分布、ISP 排行等指标。
 - **核心目标**：
@@ -18,6 +19,7 @@
 ---
 
 ## 2. 代码结构（Code Structure）
+
 <目录结构简要描述>
 
 ```text
@@ -75,6 +77,7 @@
 ---
 
 ## 3. 核心概念与约定（Core Concepts & Conventions）
+
 - **核心领域概念**：
   - **GraphNodes/GraphChannels**：来自 FIBER RPC 的图数据接口（方法名：`graph_nodes`、`graph_channels`），用于拉取节点与通道的全量/分页数据（见 `src/rpc_client.rs` 与 `src/bin/fiber-dashbord.rs`）。
   - **NodeInfo / ChannelInfo（后端领域模型）**：统一后的节点与通道信息结构；包含 `node_id`、`addresses`（Multiaddr）、`chain_hash`、`capacity`、更新信息等（见 `src/types.rs`、`src/pg_read/types.rs`）。
@@ -98,6 +101,7 @@
 ---
 
 ## 4. 核心依赖（Key Dependencies）
+
 - 后端（Cargo.toml）
   - `tokio@1` - 异步运行时
   - `salvo@0.81` - HTTP 服务与路由（含 CORS）
@@ -119,6 +123,7 @@
 ---
 
 ## 5. 常用命令（Common Commands）
+
 ```bash
 # 前端（app/）
 pnpm dev         # 启动开发环境（Next.js）
@@ -135,6 +140,7 @@ cargo build --release
 ---
 
 ## 6. 开发与运行流程（Workflow）
+
 - 新功能开发流程：
   - 后端：
     - `src/bin/fiber-dashbord.rs` 初始化 PG 连接池与数据库（首次运行会执行 `db_schema/create_table.sql`），加载 UDT 关系缓存，定时任务每 30 分钟周期性从 `FIBER_RPC_URL` 拉取 `graph_nodes` 与 `graph_channels`，经 `pg_write` 批量落库。
@@ -152,6 +158,7 @@ cargo build --release
 ---
 
 ## 7. AI 使用注意事项（AI Usage Notes）
+
 - **十六进制与大小端**：
   - 严格遵守小端十六进制文本存储规则（如容量 `u128`、时间/费率 `u64` 等）；解析/序列化使用现有转换逻辑（`U64Hex`、`U128Hex`、`faster_hex`），禁止更改为大端或移除 `0x` 前缀约定。
 - **连续聚合与查询窗口**：
@@ -159,13 +166,13 @@ cargo build --release
 - **UDT 关系缓存与外键映射**：
   - 写入侧依赖全局缓存将 `Script` 映射为 `udt_infos.id`；变更 `pg_write` 缓存或关联查询前需同步审查 `init_global_cache`、`from_rpc_to_db_schema` 与插入顺序（UDT -> 依赖 -> 关系 -> 节点/通道）。
 - **HTTP 路由与参数约定（后端）**：
-  - 现有路由见 `src/bin/fiber-dashbord.rs` 与 `src/http_server.rs`：  
-    - `GET /nodes_hourly?page=0`  
-    - `GET /channels_hourly?page=0`  
-    - `GET /nodes_nearly_monthly?page=0`  
-    - `GET /channels_nearly_monthly?page=0`  
-    - `GET /node_udt_infos?node_id=0x...`  
-    - `POST /nodes_by_udt`（body 为 `ckb_jsonrpc_types::Script`）  
+  - 现有路由见 `src/bin/fiber-dashbord.rs` 与 `src/http_server.rs`：
+    - `GET /nodes_hourly?page=0`
+    - `GET /channels_hourly?page=0`
+    - `GET /nodes_nearly_monthly?page=0`
+    - `GET /channels_nearly_monthly?page=0`
+    - `GET /node_udt_infos?node_id=0x...`
+    - `POST /nodes_by_udt`（body 为 `ckb_jsonrpc_types::Script`）
     - `GET /channel_capacitys_hourly`
   - 修改时应保持参数名与分页/返回结构不变，避免破坏前后兼容。
 - **前端架构与导入约定**：
@@ -174,8 +181,8 @@ cargo build --release
   - 新功能开发应遵循 Feature-based 架构，在 `app/src/features/` 下创建独立模块。
   - 共享组件使用 `@/shared/components/ui/` 路径，功能组件使用相对导入。
 - **环境变量**：
-  - 后端：`DATABASE_URL`、`HTTP_PORT`、`FIBER_RPC_URL`、`IPINFO_IO_TOKEN`（可选）。  
-  - 前端：`NEXT_PUBLIC_API_BASE_URL`、`NEXT_PUBLIC_USE_MOCK_DATA`、`NEXT_PUBLIC_API_TIMEOUT`。  
+  - 后端：`DATABASE_URL`、`HTTP_PORT`、`FIBER_RPC_URL`、`IPINFO_IO_TOKEN`（可选）。
+  - 前端：`NEXT_PUBLIC_API_BASE_URL`、`NEXT_PUBLIC_USE_MOCK_DATA`、`NEXT_PUBLIC_API_TIMEOUT`。
   - 注意当前前端默认 `http://localhost:3001/api`，而后端默认 `HTTP_PORT=8080`（Compose 中设置并映射）；对接真实后端时需显式配置。
 - **易错点**：
   - Multiaddr 解析仅支持 `Ip{4,6}+Tcp` 组合；地址转换逻辑位于 `pg_write::multiaddr_to_socketaddr`，勿引入阻塞或不兼容变更。
@@ -186,16 +193,16 @@ cargo build --release
 ---
 
 ## 8. 最近变更摘要（Recent Changes）
+
 > 记录近 3-5 次重要变更的简述和日期。
+
 - **2024-12-19**: 前端架构重构为 Feature-based 组织
   - 将 `app/src/libs/` 重构为 `app/src/features/dashboard/` 功能模块
   - 将 UI 组件移至 `app/src/shared/components/ui/`
   - 新增 `app/src/lib/` 存放工具函数和常量
   - 新增 `app/src/shared/types/` 存放共享类型定义
   - 更新所有导入路径，确保功能模块的独立性和可维护性
-- 关键定义可参考：  
-  - HTTP 路由（`src/bin/fiber-dashbord.rs`、`src/http_server.rs`）  
-  - TimescaleDB 结构与策略（`db_schema/create_table.sql`）  
+- 关键定义可参考：
+  - HTTP 路由（`src/bin/fiber-dashbord.rs`、`src/http_server.rs`）
+  - TimescaleDB 结构与策略（`db_schema/create_table.sql`）
   - 前端 API 契约（`app/docs/api-integration.md`、`app/src/features/dashboard/api/types.ts`）
-
-
