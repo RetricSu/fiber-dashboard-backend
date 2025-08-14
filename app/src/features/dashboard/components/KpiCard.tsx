@@ -41,27 +41,33 @@ export default function KpiCard({
   };
 
   return (
-    <Card className={className}>
+    <Card className={`group hover:shadow-lg transition-all duration-200 hover:-translate-y-1 ${className}`}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+        <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
           {title}
         </CardTitle>
-        {icon && <div className="h-4 w-4 text-muted-foreground">{icon}</div>}
+        {icon && (
+          <div className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors">
+            {icon}
+          </div>
+        )}
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        <div className="text-2xl font-bold group-hover:text-primary transition-colors">
+          {value}
+        </div>
         {change !== undefined && (
           <div className="flex items-center space-x-1 pt-1">
             {getChangeIcon()}
             <Badge
               variant="secondary"
-              className={`text-xs ${getChangeColor()}`}
+              className={`text-xs ${getChangeColor()} group-hover:scale-105 transition-transform`}
             >
               {change > 0 ? "+" : ""}
               {change.toFixed(1)}%
             </Badge>
             {changeLabel && (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors">
                 {changeLabel}
               </span>
             )}

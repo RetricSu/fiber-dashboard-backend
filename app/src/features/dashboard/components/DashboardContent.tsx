@@ -60,7 +60,7 @@ export default function DashboardContent() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 animate-fade-in">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <KpiCard
@@ -69,6 +69,7 @@ export default function DashboardContent() {
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<Zap className="h-4 w-4" />}
+          className="animate-slide-up"
         />
         <KpiCard
           title="Total Nodes"
@@ -76,6 +77,7 @@ export default function DashboardContent() {
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<Network className="h-4 w-4" />}
+          className="animate-slide-up [animation-delay:0.1s]"
         />
         <KpiCard
           title="Total Channels"
@@ -83,6 +85,7 @@ export default function DashboardContent() {
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<GitBranch className="h-4 w-4" />}
+          className="animate-slide-up [animation-delay:0.2s]"
         />
         <KpiCard
           title="Avg Channel Capacity"
@@ -90,6 +93,7 @@ export default function DashboardContent() {
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<BarChart3 className="h-4 w-4" />}
+          className="animate-slide-up [animation-delay:0.3s]"
         />
         <KpiCard
           title="Network Growth"
@@ -97,15 +101,16 @@ export default function DashboardContent() {
           change={kpiData?.networkGrowth}
           changeLabel="monthly"
           icon={<TrendingUp className="h-4 w-4" />}
+          className="animate-slide-up [animation-delay:0.4s]"
         />
       </div>
 
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Time Series Chart */}
-        <Card>
+        <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 group-hover:text-primary transition-colors">
               <TrendingUp className="h-5 w-5" />
               Network Capacity Over Time
             </CardTitle>
@@ -120,9 +125,9 @@ export default function DashboardContent() {
         </Card>
 
         {/* ISP Ranking Chart */}
-        <Card>
+        <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 group-hover:text-primary transition-colors">
               <Server className="h-5 w-5" />
               Top ISPs by Node Count
             </CardTitle>
@@ -138,9 +143,9 @@ export default function DashboardContent() {
       </div>
 
       {/* World Map Chart */}
-      <Card>
+      <Card className="group hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 group-hover:text-primary transition-colors">
             <Globe className="h-5 w-5" />
             Lightning Network Global Distribution
           </CardTitle>

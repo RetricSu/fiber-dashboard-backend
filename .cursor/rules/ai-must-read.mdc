@@ -4,7 +4,8 @@ globs: ["**/*"]
 alwaysApply: true
 ---
 
-1. 每次工作必须先制定 plan 与 todos
-2. 每次工作前必须先阅读以下项目的必读说明，生成代码前必须完整理解并遵守：
+1. 每次工作必须先制定 plan 与 todos；
+2. 每次做完工作必须执行 pnpm format && pnpm lint && pnpm build 确保无误；
+3. 工作前必先阅读以下项目的必读说明，生成代码前必须完整理解并遵守：
 
 <<< app/docs/AI_MUST_READ.md

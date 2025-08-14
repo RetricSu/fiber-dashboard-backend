@@ -9,21 +9,19 @@ import { Skeleton } from "@/shared/components/ui/skeleton";
 export default function DashboardPage() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight">
-              Lightning Network Dashboard
-            </h1>
-            <p className="text-muted-foreground">
-              Real-time insights into the Lightning Network infrastructure
-            </p>
-          </div>
-
-          <Suspense fallback={<DashboardSkeleton />}>
-            <DashboardContent />
-          </Suspense>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Dashboard Overview
+          </h1>
+          <p className="text-muted-foreground">
+            Real-time insights into the Lightning Network infrastructure
+          </p>
         </div>
+
+        <Suspense fallback={<DashboardSkeleton />}>
+          <DashboardContent />
+        </Suspense>
       </div>
     </QueryClientProvider>
   );
