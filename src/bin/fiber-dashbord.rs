@@ -29,10 +29,12 @@ async fn http_server() {
     };
     use salvo::{Listener, Router, Server, Service, conn::TcpListener, cors::Cors};
 
+    use salvo::http::Method;
     let cors = Cors::new()
-        .allow_origin("*")
-        .allow_headers(vec!["Content-Type", "Accept", "Authorization"])
-        .allow_methods(vec!["GET", "POST", "OPTIONS"])
+        .allow_origin("http://localhost:3000")
+        .allow_headers(vec!["content-type", "accept", "authorization"])
+        .allow_methods(vec![Method::GET, Method::POST, Method::OPTIONS])
+        .allow_credentials(true)
         .into_handler();
     let router = Router::new()
         .push(Router::with_path("nodes_hourly").get(list_nodes_hourly))
