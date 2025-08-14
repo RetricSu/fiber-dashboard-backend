@@ -58,8 +58,9 @@ export default function IspRankingChart({ data, height = '400px', className = ''
         textStyle: {
           color: 'var(--foreground)',
         },
-        formatter: (params: any) => {
-          const data = params[0];
+        formatter: (params: unknown) => {
+          const paramArray = Array.isArray(params) ? params : [params];
+          const data = paramArray[0] as { name: string; value: number; dataIndex: number };
           return `${data.name}<br/>Nodes: ${data.value}<br/>Capacity: ${sortedData[data.dataIndex].totalCapacity.toFixed(2)} BTC<br/>Avg Capacity: ${sortedData[data.dataIndex].averageCapacity.toFixed(3)} BTC`;
         },
       },

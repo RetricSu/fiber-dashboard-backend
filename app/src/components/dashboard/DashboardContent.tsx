@@ -55,35 +55,35 @@ export default function DashboardContent() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <KpiCard
           title="Total Capacity"
-          value={`${kpiData?.totalCapacity.toFixed(1)} BTC`}
+          value={`${kpiData?.totalCapacity.toFixed(1) || '0.0'} BTC`}
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<Zap className="h-4 w-4" />}
         />
         <KpiCard
           title="Total Nodes"
-          value={kpiData?.totalNodes.toLocaleString()}
+          value={kpiData?.totalNodes.toLocaleString() || '0'}
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<Network className="h-4 w-4" />}
         />
         <KpiCard
           title="Total Channels"
-          value={kpiData?.totalChannels.toLocaleString()}
+          value={kpiData?.totalChannels.toLocaleString() || '0'}
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<GitBranch className="h-4 w-4" />}
         />
         <KpiCard
           title="Avg Channel Capacity"
-          value={`${kpiData?.averageChannelCapacity.toFixed(3)} BTC`}
+          value={`${kpiData?.averageChannelCapacity.toFixed(3) || '0.000'} BTC`}
           change={kpiData?.networkGrowth}
           changeLabel="vs last month"
           icon={<BarChart3 className="h-4 w-4" />}
         />
         <KpiCard
           title="Network Growth"
-          value={`${kpiData?.networkGrowth.toFixed(1)}%`}
+          value={`${kpiData?.networkGrowth.toFixed(1) || '0.0'}%`}
           change={kpiData?.networkGrowth}
           changeLabel="monthly"
           icon={<TrendingUp className="h-4 w-4" />}

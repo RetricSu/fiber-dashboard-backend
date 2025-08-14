@@ -25,7 +25,7 @@ describe('API Functions', () => {
     });
 
     it('returns mock data when real API fails', async () => {
-      (fetch as any).mockRejectedValueOnce(new Error('API Error'));
+      (fetch as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('API Error'));
       
       const data = await fetchDashboardData();
       

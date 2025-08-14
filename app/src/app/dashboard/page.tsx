@@ -1,7 +1,7 @@
 'use client';
 
 import { Suspense } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/libs/query';
 import DashboardContent from '@/components/dashboard/DashboardContent';
 import { Skeleton } from '@/components/ui/skeleton';

@@ -39,9 +39,9 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
   useEffect(() => {
     try {
       if (worldGeoJson) {
-        echarts.registerMap('world', worldGeoJson as any);
+        echarts.registerMap('world', worldGeoJson as never);
         setMapLoaded(true);
-        console.log('World map registered from local JSON, features:', (worldGeoJson as any).features?.length);
+        console.log('World map registered from local JSON, features:', (worldGeoJson as { features?: unknown[] }).features?.length);
       } else {
         setMapError('World GeoJSON not found');
       }
@@ -78,11 +78,12 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
         textStyle: {
           color: 'var(--foreground)',
         },
-        formatter: (params: any) => {
-          if (params.data) {
-            return `${params.name}<br/>Nodes: ${params.data.value}<br/>Capacity: ${params.data.capacity.toFixed(2)} BTC`;
+        formatter: (params: unknown) => {
+          const param = params as { name: string; data?: { value: number; capacity: number } };
+          if (param.data) {
+            return `${param.name}<br/>Nodes: ${param.data.value}<br/>Capacity: ${param.data.capacity.toFixed(2)} BTC`;
           }
-          return params.name;
+          return param.name;
         },
       },
       visualMap: {
@@ -105,17 +106,15 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
           type: 'map',
           map: 'world',
           roam: true,
-          emphasis: {
-            label: {
-              show: true,
-            },
-          },
           data: mapData,
           itemStyle: {
             borderColor: 'var(--border)',
             borderWidth: 1,
           },
           emphasis: {
+            label: {
+              show: true,
+            },
             itemStyle: {
               areaColor: '#0ea5e9',
               shadowOffsetX: 0,

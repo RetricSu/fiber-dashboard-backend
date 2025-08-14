@@ -52,10 +52,15 @@ export default function TimeSeriesChart({ data, height = '400px', className = ''
         textStyle: {
           color: 'var(--foreground)',
         },
-        formatter: (params: any) => {
-          const date = new Date(params[0].value[0]).toLocaleDateString();
-          const value = params[0].value[1].toFixed(2);
-          return `${date}<br/>${params[0].seriesName}: ${value} BTC`;
+        formatter: (params: unknown) => {
+          const paramArray = Array.isArray(params) ? params : [params];
+          const firstParam = paramArray[0] as { value: [string | number, number]; seriesName: string };
+          if (firstParam && Array.isArray(firstParam.value)) {
+            const date = new Date(firstParam.value[0]).toLocaleDateString();
+            const value = Number(firstParam.value[1]).toFixed(2);
+            return `${date}<br/>${firstParam.seriesName}: ${value} BTC`;
+          }
+          return '';
         },
       },
       legend: {
@@ -73,7 +78,6 @@ export default function TimeSeriesChart({ data, height = '400px', className = ''
       },
       xAxis: {
         type: 'time',
-        boundaryGap: false,
         axisLine: {
           lineStyle: {
             color: 'var(--border)',
