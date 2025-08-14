@@ -45,23 +45,21 @@ export default function KpiCard({
   };
 
   return (
-    <Card
-      className={`group hover:shadow-zed-lg transition-all duration-300 hover:-translate-y-1 border-0 shadow-zed bg-white/80 backdrop-blur-sm ${className}`}
-    >
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+    <Card className={`p-6 ${className}`}>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4 px-0">
         <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
           {title}
         </CardTitle>
         {icon && (
           <div
-            className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center group-hover:scale-110 transition-all duration-200`}
+            className={`w-10 h-10 ${iconBg} rounded-lg flex items-center justify-center group-hover:scale-110 transition-all duration-200`}
           >
             <div className={iconColor}>{icon}</div>
           </div>
         )}
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors mb-2">
+      <CardContent className="pt-0 px-0">
+        <div className="text-3xl font-bold text-foreground group-hover:text-primary transition-colors mb-3">
           {value}
         </div>
         {change !== undefined && (

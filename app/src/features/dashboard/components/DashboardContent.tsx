@@ -19,17 +19,7 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { Skeleton } from "@/shared/components/ui/skeleton";
-import {
-  Zap,
-  Network,
-  GitBranch,
-  BarChart3,
-  TrendingUp,
-  Globe,
-  Server,
-  Activity,
-  ArrowUpRight,
-} from "lucide-react";
+import { Globe, Server, Activity, ArrowUpRight } from "lucide-react";
 
 export default function DashboardContent() {
   // 查询数据
@@ -69,9 +59,7 @@ export default function DashboardContent() {
           title="Total Capacity"
           value={`${kpiData?.totalCapacity.toFixed(1) || "0.0"} CKB`}
           change={kpiData?.networkGrowth}
-          changeLabel="vs last month"
-          icon={<Zap className="h-5 w-5" />}
-          className="animate-slide-up bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200/50"
+          className="animate-slide-up card-zed card-zed-hover"
           iconBg="bg-blue-500/10"
           iconColor="text-blue-600"
         />
@@ -79,9 +67,7 @@ export default function DashboardContent() {
           title="Total Nodes"
           value={kpiData?.totalNodes.toLocaleString() || "0"}
           change={kpiData?.networkGrowth}
-          changeLabel="vs last month"
-          icon={<Network className="h-5 w-5" />}
-          className="animate-slide-up [animation-delay:0.1s] bg-gradient-to-br from-green-50 to-green-100/50 border-green-200/50"
+          className="animate-slide-up [animation-delay:0.1s] card-zed card-zed-hover"
           iconBg="bg-green-500/10"
           iconColor="text-green-600"
         />
@@ -89,9 +75,7 @@ export default function DashboardContent() {
           title="Total Channels"
           value={kpiData?.totalChannels.toLocaleString() || "0"}
           change={kpiData?.networkGrowth}
-          changeLabel="vs last month"
-          icon={<GitBranch className="h-5 w-5" />}
-          className="animate-slide-up [animation-delay:0.2s] bg-gradient-to-br from-purple-50 to-purple-100/50 border-purple-200/50"
+          className="animate-slide-up [animation-delay:0.2s] card-zed card-zed-hover"
           iconBg="bg-purple-500/10"
           iconColor="text-purple-600"
         />
@@ -99,9 +83,7 @@ export default function DashboardContent() {
           title="Avg Channel Capacity"
           value={`${kpiData?.averageChannelCapacity.toFixed(2) || "0.00"} CKB`}
           change={kpiData?.networkGrowth}
-          changeLabel="vs last month"
-          icon={<BarChart3 className="h-5 w-5" />}
-          className="animate-slide-up [animation-delay:0.3s] bg-gradient-to-br from-orange-50 to-orange-100/50 border-orange-200/50"
+          className="animate-slide-up [animation-delay:0.3s] card-zed card-zed-hover"
           iconBg="bg-orange-500/10"
           iconColor="text-orange-600"
         />
@@ -109,9 +91,7 @@ export default function DashboardContent() {
           title="Network Growth"
           value={`${kpiData?.networkGrowth.toFixed(1) || "0.0"}%`}
           change={kpiData?.networkGrowth}
-          changeLabel="monthly"
-          icon={<TrendingUp className="h-5 w-5" />}
-          className="animate-slide-up [animation-delay:0.4s] bg-gradient-to-br from-red-50 to-red-100/50 border-red-200/50"
+          className="animate-slide-up [animation-delay:0.4s] card-zed card-zed-hover"
           iconBg="bg-red-500/10"
           iconColor="text-red-600"
         />
@@ -120,7 +100,7 @@ export default function DashboardContent() {
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Time Series Chart */}
-        <Card className="group hover:shadow-zed-lg transition-all duration-300 hover:-translate-y-1 border-0 shadow-zed bg-white/80 backdrop-blur-sm">
+        <Card className="card-zed card-zed-hover group">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center justify-between text-lg font-semibold text-foreground">
               <div className="flex items-center gap-3">
@@ -142,7 +122,7 @@ export default function DashboardContent() {
         </Card>
 
         {/* ISP Ranking Chart */}
-        <Card className="group hover:shadow-zed-lg transition-all duration-300 hover:-translate-y-1 border-0 shadow-zed bg-white/80 backdrop-blur-sm">
+        <Card className="card-zed card-zed-hover group">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center justify-between text-lg font-semibold text-foreground">
               <div className="flex items-center gap-3">
@@ -165,7 +145,7 @@ export default function DashboardContent() {
       </div>
 
       {/* World Map Chart */}
-      <Card className="group hover:shadow-zed-lg transition-all duration-300 hover:-translate-y-1 border-0 shadow-zed bg-white/80 backdrop-blur-sm">
+      <Card className="card-zed card-zed-hover group">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center justify-between text-lg font-semibold text-foreground">
             <div className="flex items-center gap-3">
@@ -195,17 +175,30 @@ function DashboardSkeleton() {
       {/* KPI Cards Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-32 rounded-xl" />
+          <div key={i} className="card-zed p-6">
+            <Skeleton className="h-4 w-20 mb-2" />
+            <Skeleton className="h-8 w-16 mb-2" />
+            <Skeleton className="h-3 w-24" />
+          </div>
         ))}
       </div>
 
       {/* Charts Skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Skeleton className="h-96 rounded-xl" />
-        <Skeleton className="h-96 rounded-xl" />
+        <div className="card-zed p-6">
+          <Skeleton className="h-6 w-32 mb-4" />
+          <Skeleton className="h-80 w-full" />
+        </div>
+        <div className="card-zed p-6">
+          <Skeleton className="h-6 w-32 mb-4" />
+          <Skeleton className="h-80 w-full" />
+        </div>
       </div>
 
-      <Skeleton className="h-96 rounded-xl" />
+      <div className="card-zed p-6">
+        <Skeleton className="h-6 w-32 mb-4" />
+        <Skeleton className="h-96 w-full" />
+      </div>
     </div>
   );
 }
