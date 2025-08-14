@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
-import { GeoNode } from '@/libs/types';
-import worldGeoJson from '@/libs/maps/world.json';
+import { GeoNode } from '../../api/types';
+import worldGeoJson from '../../api/maps/world.json';
 
 interface WorldMapChartProps {
   data: GeoNode[];

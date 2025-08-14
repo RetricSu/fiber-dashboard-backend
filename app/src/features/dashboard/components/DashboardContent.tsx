@@ -1,14 +1,14 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { queryKeys } from '@/libs/query';
-import { fetchKpiData, fetchTimeSeriesData, fetchGeoNodeData, fetchIspRankingData } from '@/libs/api';
+import { queryKeys } from '../hooks/useDashboard';
+import { fetchKpiData, fetchTimeSeriesData, fetchGeoNodeData, fetchIspRankingData } from '../api/client';
 import KpiCard from './KpiCard';
-import TimeSeriesChart from '../charts/TimeSeriesChart';
-import WorldMapChart from '../charts/WorldMapChart';
-import IspRankingChart from '../charts/IspRankingChart';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
+import TimeSeriesChart from './charts/TimeSeriesChart';
+import WorldMapChart from './charts/WorldMapChart';
+import IspRankingChart from './charts/IspRankingChart';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 import { 
   Zap, 
   Network, 

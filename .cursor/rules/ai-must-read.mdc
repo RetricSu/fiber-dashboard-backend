@@ -1,0 +1,11 @@
+---
+description: 项目必读文档（AI 必须参考）
+globs: ["**/*"]
+alwaysApply: true
+---
+
+1. 每次工作必须先制定 plan 与 todos
+2. 每次 plan 必须包含最后一步为：阅读 app/docs/maintain-doc.md 并更新 AI_MUST_READ.md
+3. 每次工作前必须先阅读以下项目的必读说明，生成代码前必须完整理解并遵守：
+
+<<< app/docs/AI_MUST_READ.md

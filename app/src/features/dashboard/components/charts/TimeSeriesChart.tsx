@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
-import { TimeSeries } from '@/libs/types';
+import { TimeSeries } from '../../api/types';
 
 interface TimeSeriesChartProps {
   data: TimeSeries[];

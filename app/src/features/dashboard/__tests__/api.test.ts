@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { fetchDashboardData, fetchKpiData } from '../api';
-import { KpiDataSchema } from '../types';
+import { fetchDashboardData, fetchKpiData } from '../api/client';
+import { KpiDataSchema } from '../api/types';
 
 // Mock fetch
 global.fetch = vi.fn();

@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { fetchDashboardData, fetchKpiData, fetchTimeSeriesData, fetchGeoNodeData, fetchIspRankingData } from './api';
+import { fetchDashboardData, fetchKpiData, fetchTimeSeriesData, fetchGeoNodeData, fetchIspRankingData } from '../api/client';
 
 // 创建 QueryClient 实例
 export const queryClient = new QueryClient({

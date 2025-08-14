@@ -2,9 +2,9 @@
 
 import { Suspense } from 'react';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/libs/query';
-import DashboardContent from '@/components/dashboard/DashboardContent';
-import { Skeleton } from '@/components/ui/skeleton';
+import { queryClient } from '@/features/dashboard/hooks/useDashboard';
+import DashboardContent from '@/features/dashboard/components/DashboardContent';
+import { Skeleton } from '@/shared/components/ui/skeleton';
 
 export default function DashboardPage() {
   return (

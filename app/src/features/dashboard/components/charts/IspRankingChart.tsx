@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import * as echarts from 'echarts';
-import { IspRanking } from '@/libs/types';
+import { IspRanking } from '../../api/types';
 
 interface IspRankingChartProps {
   data: IspRanking[];
