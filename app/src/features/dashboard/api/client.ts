@@ -98,13 +98,14 @@ export async function fetchDashboardData(): Promise<DashboardData> {
         const capacityInCKB = Number(capacityInShannons) / SHANNONS_PER_CKB;
         
         // 将容量分配给两个节点所在的国家
-        const node1Country = nodeCountryMap.get(channel.node1) || 'Unknown';
-        const node2Country = nodeCountryMap.get(channel.node2) || 'Unknown';
+        const node1Country = nodeCountryMap.get(channel.node1);
+        const node2Country = nodeCountryMap.get(channel.node2);
         
-        if (countryMap.has(node1Country)) {
+        // 只处理有明确国家信息的节点
+        if (node1Country && node1Country !== 'Unknown' && countryMap.has(node1Country)) {
           countryMap.get(node1Country)!.capacity += capacityInCKB / 2;
         }
-        if (countryMap.has(node2Country)) {
+        if (node2Country && node2Country !== 'Unknown' && countryMap.has(node2Country)) {
           countryMap.get(node2Country)!.capacity += capacityInCKB / 2;
         }
       } catch (error) {
@@ -114,12 +115,12 @@ export async function fetchDashboardData(): Promise<DashboardData> {
 
     const geoNodes: GeoNode[] = Array.from(countryMap.entries())
       .map(([country, data]) => ({
-        country,
-        countryCode: getCountryCode(country),
+        country: getCountryName(country),
+        countryCode: country,
         nodeCount: data.count,
         totalCapacity: Math.round(Math.max(0, data.capacity) * 100) / 100, // Ensure non-negative
       }))
-      .filter(item => item.countryCode !== 'UNKNOWN')
+      .filter(item => item.country !== 'Unknown' && item.country !== 'undefined' && item.countryCode !== 'Unknown')
       .sort((a, b) => b.nodeCount - a.nodeCount)
       .slice(0, 10);
 
@@ -263,35 +264,40 @@ const generateMockData = (): DashboardData => {
   };
 };
 
-// Helper function to get country code from country name or code
-function getCountryCode(country: string): string {
-  // If already a 2-letter country code, return as-is
-  if (country && country.length === 2) {
-    return country.toUpperCase();
-  }
-  
-  // Map full country names to codes
-  const countryCodes: Record<string, string> = {
-    'United States': 'US',
-    'Germany': 'DE',
-    'Netherlands': 'NL',
-    'United Kingdom': 'GB',
-    'Canada': 'CA',
-    'France': 'FR',
-    'Japan': 'JP',
-    'Australia': 'AU',
-    'Switzerland': 'CH',
-    'Singapore': 'SG',
-    'China': 'CN',
-    'Russia': 'RU',
-    'Brazil': 'BR',
-    'India': 'IN',
-    'South Korea': 'KR',
-    'Hong Kong': 'HK',
-    'South Africa': 'ZA',
-    'Indonesia': 'ID',
+// Helper function to get full country name for world map matching
+function getCountryName(country: string): string {
+  // Map 2-letter codes to full country names for world map (matching GeoJSON)
+  const countryNames: Record<string, string> = {
+    'US': 'United States',
+    'HK': 'Hong Kong',
+    'SG': 'Singapore',
+    'DE': 'Germany',
+    'AU': 'Australia',
+    'ZA': 'South Africa',
+    'BR': 'Brazil',
+    'ID': 'Indonesia',
+    'JP': 'Japan',
+    'CN': 'China',
+    'RU': 'Russia',
+    'GB': 'United Kingdom',
+    'CA': 'Canada',
+    'FR': 'France',
+    'CH': 'Switzerland',
+    'IN': 'India',
+    'KR': 'South Korea',
+    'NL': 'Netherlands',
+    'IT': 'Italy',
+    'ES': 'Spain',
+    'SE': 'Sweden',
+    'NO': 'Norway',
+    'FI': 'Finland',
+    'DK': 'Denmark',
+    'BE': 'Belgium',
+    'AT': 'Austria',
+    'PL': 'Poland',
+    'IE': 'Ireland',
   };
-  return countryCodes[country] || country || 'UNKNOWN';
+  return countryNames[country] || country || 'Unknown';
 }
 
 // Helper function to extract ISP from addresses

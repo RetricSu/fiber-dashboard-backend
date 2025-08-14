@@ -82,7 +82,8 @@ export default function WorldMapChart({ data, height = '500px', className = '' }
           const param = params as { name: string; data?: { value: number; capacity: number } };
           if (param.data) {
             const capacity = param.data.capacity || 0;
-            return `${param.name}<br/>Nodes: ${param.data.value}<br/>Capacity: ${capacity.toFixed(2)} CKB`;
+            const nodeCount = param.data.value || 0;
+            return `${param.name}<br/>Nodes: ${nodeCount}<br/>Capacity: ${capacity.toFixed(2)} CKB`;
           }
           return param.name;
         },
