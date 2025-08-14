@@ -59,7 +59,7 @@ export default function DashboardContent() {
           title="Total Capacity"
           value={`${kpiData?.totalCapacity.toFixed(1) || "0.0"} CKB`}
           change={kpiData?.networkGrowth}
-          className="animate-slide-up card-zed card-zed-hover"
+          className="animate-slide-up"
           iconBg="bg-blue-500/10"
           iconColor="text-blue-600"
         />
@@ -67,7 +67,7 @@ export default function DashboardContent() {
           title="Total Nodes"
           value={kpiData?.totalNodes.toLocaleString() || "0"}
           change={kpiData?.networkGrowth}
-          className="animate-slide-up [animation-delay:0.1s] card-zed card-zed-hover"
+          className="animate-slide-up [animation-delay:0.1s]"
           iconBg="bg-green-500/10"
           iconColor="text-green-600"
         />
@@ -75,7 +75,7 @@ export default function DashboardContent() {
           title="Total Channels"
           value={kpiData?.totalChannels.toLocaleString() || "0"}
           change={kpiData?.networkGrowth}
-          className="animate-slide-up [animation-delay:0.2s] card-zed card-zed-hover"
+          className="animate-slide-up [animation-delay:0.2s]"
           iconBg="bg-purple-500/10"
           iconColor="text-purple-600"
         />
@@ -83,7 +83,7 @@ export default function DashboardContent() {
           title="Avg Channel Capacity"
           value={`${kpiData?.averageChannelCapacity.toFixed(2) || "0.00"} CKB`}
           change={kpiData?.networkGrowth}
-          className="animate-slide-up [animation-delay:0.3s] card-zed card-zed-hover"
+          className="animate-slide-up [animation-delay:0.3s]"
           iconBg="bg-orange-500/10"
           iconColor="text-orange-600"
         />
@@ -91,7 +91,7 @@ export default function DashboardContent() {
           title="Network Growth"
           value={`${kpiData?.networkGrowth.toFixed(1) || "0.0"}%`}
           change={kpiData?.networkGrowth}
-          className="animate-slide-up [animation-delay:0.4s] card-zed card-zed-hover"
+          className="animate-slide-up [animation-delay:0.4s]"
           iconBg="bg-red-500/10"
           iconColor="text-red-600"
         />
